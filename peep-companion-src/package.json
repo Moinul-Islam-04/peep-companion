@@ -4,8 +4,8 @@
   "description": "Your productivity companion",
   "main": "electron/main.js",
   "scripts": {
-    "dev": "concurrently \"vite\" \"wait-on http://localhost:5173 && electron .\"",
-    "build": "vite build && electron-builder",
+    "dev": "node scripts/generate-icon.js && concurrently \"vite\" \"wait-on http://localhost:5173 && electron .\"",
+    "build": "node scripts/generate-icon.js && vite build && electron-builder",
     "preview": "vite preview"
   },
   "devDependencies": {

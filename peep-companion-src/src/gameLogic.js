@@ -7,6 +7,60 @@ export const STAGES = [
   { name: 'Peep Pro',   minXP: 700,  emoji: '🦆', description: 'You\'re unstoppable!' },
 ]
 
+// Peep types/species with different characteristics
+export const PEEP_TYPES = [
+  // Common (Gold)
+  { id: 'golden', name: 'Golden Peep', emoji: '🐤', rarity: 'common', color: '#f9c846', statMod: { xp: 1.0, happiness: 1.0 } },
+  { id: 'mint', name: 'Mint Peep', emoji: '🦗', rarity: 'common', color: '#6edbaf', statMod: { xp: 0.9, happiness: 1.1 } },
+  { id: 'sky', name: 'Sky Peep', emoji: '🐦', rarity: 'common', color: '#5fc3e4', statMod: { xp: 1.1, happiness: 0.9 } },
+  // Rare (Purple)
+  { id: 'cosmic', name: 'Cosmic Peep', emoji: '🌟', rarity: 'rare', color: '#b399ff', statMod: { xp: 1.2, happiness: 1.0 } },
+  { id: 'rose', name: 'Rose Peep', emoji: '🌹', rarity: 'rare', color: '#e8768a', statMod: { xp: 0.95, happiness: 1.2 } },
+  // Ultra Rare (Legendary)
+  { id: 'phoenix', name: 'Phoenix Peep', emoji: '🔥', rarity: 'ultra', color: '#ff6b6b', statMod: { xp: 1.5, happiness: 0.8 } },
+  { id: 'lunar', name: 'Lunar Peep', emoji: '🌙', rarity: 'ultra', color: '#e0d5ff', statMod: { xp: 1.1, happiness: 1.3 } },
+]
+
+// Gacha box types with pull rates
+export const GACHA_BOXES = [
+  { 
+    id: 'normal',
+    name: 'Normal Box',
+    cost: 10,
+    color: '#f9c846',
+    pulls: [
+      { type: 'golden', rarity: 'common', rate: 0.4 },
+      { type: 'mint', rarity: 'common', rate: 0.3 },
+      { type: 'sky', rarity: 'common', rate: 0.3 },
+    ]
+  },
+  { 
+    id: 'special',
+    name: 'Special Box',
+    cost: 30,
+    color: '#b399ff',
+    pulls: [
+      { type: 'golden', rarity: 'common', rate: 0.25 },
+      { type: 'mint', rarity: 'common', rate: 0.2 },
+      { type: 'sky', rarity: 'common', rate: 0.2 },
+      { type: 'cosmic', rarity: 'rare', rate: 0.2 },
+      { type: 'rose', rarity: 'rare', rate: 0.15 },
+    ]
+  },
+  { 
+    id: 'legendary',
+    name: 'Legendary Box',
+    cost: 100,
+    color: '#ff6b6b',
+    pulls: [
+      { type: 'cosmic', rarity: 'rare', rate: 0.3 },
+      { type: 'rose', rarity: 'rare', rate: 0.3 },
+      { type: 'phoenix', rarity: 'ultra', rate: 0.25 },
+      { type: 'lunar', rarity: 'ultra', rate: 0.15 },
+    ]
+  }
+]
+
 export function getStage(xp) {
   for (let i = STAGES.length - 1; i >= 0; i--) {
     if (xp >= STAGES[i].minXP) return { ...STAGES[i], index: i }
@@ -27,17 +81,52 @@ export function getMoodLevel(happiness) {
   return 'neglected'
 }
 
+export function getPeepType(typeId) {
+  return PEEP_TYPES.find(t => t.id === typeId)
+}
+
+export function createPeep(typeId, name = null) {
+  const type = getPeepType(typeId)
+  if (!type) return null
+  
+  return {
+    id: typeId + '_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+    typeId,
+    name: name || type.name,
+    xp: 0,
+    happiness: 70,
+    lastCheckin: Date.now(),
+    createdAt: Date.now(),
+  }
+}
+
+export function performGachaPull(boxId) {
+  const box = GACHA_BOXES.find(b => b.id === boxId)
+  if (!box) return null
+  
+  const rand = Math.random()
+  let cumulative = 0
+  
+  for (const pull of box.pulls) {
+    cumulative += pull.rate
+    if (rand <= cumulative) {
+      return createPeep(pull.type)
+    }
+  }
+  
+  return createPeep(box.pulls[0].type)
+}
+
 export function getDefaultSave() {
+  const starterPeep = createPeep('golden', 'Your First Peep')
   return {
     onboarded: false,
-    profile: { name: '', goals: [] },
-    peep: {
-      xp: 0,
-      happiness: 70,
-      lastCheckin: Date.now(),
-    },
+    profile: { name: '', peepName: 'Peep' },
+    coins: 0,
+    activePeepId: starterPeep.id,
+    peeps: [starterPeep],  // Array of owned peeps
     tasks: [],       // { id, label, type, goal, unit, completedToday, totalCompleted }
-    log: [],         // { timestamp, taskId, label, xpEarned }
+    log: [],         // { timestamp, taskId, label, xpEarned, coinsEarned }
     streak: 0,
     lastStreakDate: null,
   }
@@ -45,10 +134,11 @@ export function getDefaultSave() {
 
 export function decayHappiness(save) {
   const now = Date.now()
-  const hoursSince = (now - save.peep.lastCheckin) / 3600000
+  const activePeep = save.peeps?.find(p => p.id === save.activePeepId) || save.peep
+  const hoursSince = (now - activePeep.lastCheckin) / 3600000
   // Lose ~5 happiness per 24h of inactivity
   const decay = Math.floor(hoursSince / 24 * 5)
-  return Math.max(0, save.peep.happiness - decay)
+  return Math.max(0, activePeep.happiness - decay)
 }
 
 export function isSameDay(ts1, ts2) {
