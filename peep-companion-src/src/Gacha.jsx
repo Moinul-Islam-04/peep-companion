@@ -43,45 +43,45 @@ export default function Gacha({ coins, onPull, onClose }) {
       <style>{`
         .gacha-header {
           padding: 16px 20px;
-          borderBottom: 1px solid rgba(255,255,255,0.1);
+          border-bottom: 1px solid rgba(255,255,255,0.1);
           display: flex;
-          justifyContent: space-between;
-          alignItems: center;
+          justify-content: space-between;
+          align-items: center;
         }
         .gacha-title {
-          fontSize: 18px;
-          fontWeight: 900;
+          font-size: 18px;
+          font-weight: 900;
           color: #f9c846;
         }
         .coin-display {
-          display: flex;
-          alignItems: center;
+          display: inline-flex;
+          align-items: center;
           gap: 6px;
-          fontSize: 14px;
-          fontWeight: 800;
+          font-size: 14px;
+          font-weight: 800;
           color: #f9c846;
           background: rgba(249,200,70,0.1);
           padding: 8px 14px;
-          borderRadius: 20px;
+          border-radius: 20px;
           border: 1px solid rgba(249,200,70,0.3);
         }
         .gacha-container {
           flex: 1;
-          overflowY: auto;
+          overflow-y: auto;
           padding: 20px;
           display: flex;
-          flexDirection: column;
+          flex-direction: column;
           gap: 12px;
         }
         .box-option {
           padding: 16px;
-          borderRadius: 12px;
+          border-radius: 12px;
           border: 2px solid;
           cursor: pointer;
           transition: all 0.2s;
           display: flex;
-          justifyContent: space-between;
-          alignItems: center;
+          justify-content: space-between;
+          align-items: center;
         }
         .box-option:hover { transform: translateY(-2px); }
         .box-option.disabled {
@@ -90,26 +90,27 @@ export default function Gacha({ coins, onPull, onClose }) {
         }
         .box-info {
           display: flex;
-          flexDirection: column;
+          flex-direction: column;
           gap: 4px;
         }
         .box-name {
-          fontSize: 14px;
-          fontWeight: 800;
+          font-size: 14px;
+          font-weight: 800;
         }
         .box-rates {
-          fontSize: 11px;
+          font-size: 11px;
           opacity: 0.7;
+          text-transform: capitalize;
         }
         .cost-btn {
           padding: 10px 20px;
-          borderRadius: 8px;
-          fontWeight: 800;
-          fontSize: 13px;
+          border-radius: 8px;
+          font-weight: 800;
+          font-size: 13px;
           border: none;
           cursor: pointer;
           transition: all 0.2s;
-          whiteSpace: nowrap;
+          white-space: nowrap;
         }
         .cost-btn:hover:not(:disabled) { transform: scale(1.05); }
         .cost-btn:disabled {
@@ -127,17 +128,17 @@ export default function Gacha({ coins, onPull, onClose }) {
           inset: 0;
           background: rgba(0,0,0,0.8);
           display: flex;
-          flexDirection: column;
-          alignItems: center;
-          justifyContent: center;
-          zIndex: 1000;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          z-index: 1000;
         }
         .result-box {
           background: linear-gradient(180deg, #2d2d44 0%, #1a1a2e 100%);
-          borderRadius: 20px;
+          border-radius: 20px;
           padding: 40px 30px;
-          textAlign: center;
-          maxWidth: 400px;
+          text-align: center;
+          max-width: 400px;
           border: 3px solid;
           animation: resultPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
@@ -145,31 +146,31 @@ export default function Gacha({ coins, onPull, onClose }) {
           0% { transform: scale(0.3); opacity: 0; }
           100% { transform: scale(1); opacity: 1; }
         }
-        .rarity-common { borderColor: #f9c846; }
-        .rarity-rare { borderColor: #b399ff; }
-        .rarity-ultra { borderColor: #ff6b6b; }
+        .rarity-common { border-color: #f9c846; }
+        .rarity-rare { border-color: #b399ff; }
+        .rarity-ultra { border-color: #ff6b6b; }
         .result-emoji {
-          fontSize: 120px;
-          marginBottom: 16px;
+          font-size: 120px;
+          margin-bottom: 16px;
         }
         .result-name {
-          fontSize: 18px;
-          fontWeight: 900;
-          marginBottom: 4px;
+          font-size: 18px;
+          font-weight: 900;
+          margin-bottom: 4px;
         }
         .result-rarity {
-          fontSize: 12px;
-          fontWeight: 800;
-          textTransform: uppercase;
-          letterSpacing: 0.1em;
-          marginBottom: 20px;
+          font-size: 12px;
+          font-weight: 800;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+          margin-bottom: 20px;
         }
         .result-btn {
           padding: 12px 28px;
-          borderRadius: 8px;
+          border-radius: 8px;
           border: none;
-          fontWeight: 800;
-          fontSize: 14px;
+          font-weight: 800;
+          font-size: 14px;
           cursor: pointer;
           background: #6edbaf;
           color: #1a1a2e;
