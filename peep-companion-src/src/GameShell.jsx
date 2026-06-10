@@ -7,7 +7,7 @@ import BattleMap from './BattleMap.jsx'
 import Battle from './Battle.jsx'
 import { getPeepType, createPeep } from './gameLogic.js'
 import { getBattleStats, rollTreasure, getItem, BOSS_REWARD } from './game/battle.js'
-import { generateMap } from './game/mapGen.js'
+import { generateMap, getNode } from './game/mapGen.js'
 import { combatantFromPeep, combatantFromRunMember, buildEnemyTeam, initBattle } from './game/combat.js'
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -17,8 +17,9 @@ import { combatantFromPeep, combatantFromRunMember, buildEnemyTeam, initBattle }
 // ─────────────────────────────────────────────────────────────────────────────
 export default function GameShell({ save, onSave }) {
   const [view, setView] = useState('habits')
-  const [combat, setCombat] = useState(null)        // { state, node } while a fight is live
   const [toast, setToast] = useState(null)          // transient reward/info message
+  // A live fight lives in save.run.activeCombat = { state, nodeId } so it survives
+  // an app reload; the Battle view reads/writes it through the handlers below.
 
   const { coins = 0, peeps = [], activePeepId, teamIds = [], run } = save
   const teamPeeps = teamIds.map(id => peeps.find(p => p.id === id)).filter(Boolean)
@@ -61,21 +62,30 @@ export default function GameShell({ save, onSave }) {
       advanceRun({ inventory: [...run.inventory, itemId], position: node.id, reached: [...run.reached, node.id] })
       flash(`💎 Found ${getItem(itemId).emoji} ${getItem(itemId).name}!`)
     } else {
-      // battle / elite / boss — enter combat
+      // battle / elite / boss — open a persisted fight
       const depth = node.layer
       const allies = run.team.map(combatantFromRunMember)
       const enemies = buildEnemyTeam(node.type === 'boss' ? 'boss' : node.type === 'elite' ? 'elite' : 'battle', depth)
-      setCombat({ state: initBattle(allies, enemies, { kind: node.type }), node })
+      const state = initBattle(allies, enemies, { kind: node.type, inventory: run.inventory })
+      onSave({ ...save, run: { ...run, activeCombat: { state, nodeId: node.id } } })
     }
   }
 
-  // Combat finished → write HP back, grant rewards, advance or end the run.
-  const handleCombatResolve = (result, finalAllies) => {
-    const node = combat.node
-    setCombat(null)
+  // Persist every in-fight state change so a reload resumes mid-battle.
+  const handleCombatStateChange = (state) => {
+    if (!run?.activeCombat) return
+    onSave({ ...save, run: { ...run, activeCombat: { ...run.activeCombat, state } } })
+  }
+
+  // Combat finished → write HP + leftover items back, grant rewards, advance/end.
+  const handleCombatResolve = (finalState) => {
+    const node = getNode(run.map, run.activeCombat.nodeId)
+    const result = finalState.result
+    const finalAllies = finalState.ally
+    const inventory = finalState.inventory
 
     if (result === 'lose') {
-      onSave({ ...save, run: { ...run, status: 'lost' } })
+      onSave({ ...save, run: { ...run, activeCombat: null, status: 'lost' } })
       flash('💀 Your team fell in the dungeon…')
       return
     }
@@ -103,7 +113,7 @@ export default function GameShell({ save, onSave }) {
         peeps: [...grownPeeps, trophyPeep],
         coins: coins + reward.coins + BOSS_REWARD.coins,
         trophies: [...(save.trophies || []), { name: 'Chaos Hydra', peepId: trophyPeep.id, at: Date.now() }],
-        run: { ...run, team, status: 'won' },
+        run: { ...run, team, inventory, activeCombat: null, status: 'won' },
       })
       flash(`🏆 BOSS DOWN! +${reward.coins + BOSS_REWARD.coins}💰 & a ${getPeepType(BOSS_REWARD.peepTypeId).name}!`)
     } else {
@@ -111,7 +121,7 @@ export default function GameShell({ save, onSave }) {
         ...save,
         peeps: grownPeeps,
         coins: coins + reward.coins,
-        run: { ...run, team, position: node.id, reached: [...run.reached, node.id] },
+        run: { ...run, team, inventory, activeCombat: null, position: node.id, reached: [...run.reached, node.id] },
       })
       flash(`Victory! +${reward.coins}💰  +${reward.xp} XP to team`)
     }
@@ -119,9 +129,17 @@ export default function GameShell({ save, onSave }) {
 
   // ── Render ──────────────────────────────────────────────────────────────────
 
-  // Live combat takes over the whole screen (no nav).
-  if (combat) {
-    return <Battle initialState={combat.state} inventory={run.inventory} onResolve={handleCombatResolve} />
+  // Live combat takes over the whole screen (no nav). Resumed automatically after
+  // a reload because it's persisted in save.run.activeCombat.
+  if (run?.activeCombat) {
+    return (
+      <Battle
+        key={run.activeCombat.nodeId}
+        state={run.activeCombat.state}
+        onStateChange={handleCombatStateChange}
+        onResolve={handleCombatResolve}
+      />
+    )
   }
 
   const screen = (() => {

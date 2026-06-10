@@ -93,11 +93,23 @@ getBattleStats(peep)    -> { level, maxHp, atk, def, spd, element, moves }
   reached: string[],                   // cleared node ids
   team: Combatant[],                   // battle copies carrying current HP between fights
   inventory: string[],                 // temp item ids for this run only
+  activeCombat: { state, nodeId } | null,  // a live fight, persisted so it survives reload
   status: 'active' | 'won' | 'lost',
 }
 ```
 A run is consumable: items and HP reset when it ends. Beating the boss yields a permanent
 `Trophy` (a high-value Peep + Gold).
+
+**Mid-fight persistence.** A live battle is the fully-serializable engine `state` stored in
+`run.activeCombat`. The [Battle](peep-companion-src/src/Battle.jsx) view is seeded from it and
+lifts every state change back up (`onStateChange`) so each action is written to disk. On reload,
+`GameShell` sees `run.activeCombat` and re-renders the fight exactly where it left off — no fight
+is ever dropped. The combat `state` also carries a copy of `inventory`, so item use is consumed
+and persisted mid-fight; surviving HP + leftover items are reconciled back into the run on resolve.
+
+A `Combatant` additionally carries `status: { type, turns } | null` for burn/poison/paralyze
+(see `STATUSES` in `game/battle.js`) — damage-over-time and skipped turns resolve in the engine and
+clear when the fight ends.
 
 ---
 
@@ -149,7 +161,10 @@ src/
 
 - **Phase A — Habits & growth:** ✅ done (`Dashboard`, `gameLogic`, XP/coins/happiness/streak).
 - **Phase B — Gacha & team:** ✅ gacha + collection done; team-of-3 selection added (`TeamSelect`).
-- **Phase C — Roguelite:** 🚧 scaffolded here — map gen, pure combat engine, items, boss trophy,
-  and the Battle/Map UI. Tuning numbers, more moves/enemies, and animation are the next passes.
+- **Phase C — Roguelite:** ✅ map gen, pure combat engine, items, boss trophy, Battle/Map UI.
+  Now includes **mid-fight persistence/resume**, **status effects** (burn/poison/paralyze) with
+  status moves, **item consumption + revive targeting**, and battle juice (damage popups, screen
+  shake, hit flashes). Remaining polish: deeper balance tuning, more enemies/moves, and
+  per-attacker lunge animations.
 
 Run it: `cd peep-companion-src && npm install && npm run dev`.

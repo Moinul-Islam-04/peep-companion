@@ -1,10 +1,14 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // Pure turn-based combat engine (Pokémon-style, team of 3 vs. enemy team).
 // No React. Every action returns a NEW state + appended battle log; the UI just
-// renders state and dispatches actions. Persisted run HP is read back out of the
-// surviving ally combatants when a battle ends.
+// renders state and dispatches actions. The whole state is JSON-serializable so
+// GameShell can persist a fight in `run.activeCombat` and resume it after reload.
+//
+// The state also carries `inventory` (a copy of the run's items) so item use is
+// consumed and persisted mid-fight; HP + remaining inventory are read back out
+// when the battle ends.
 // ─────────────────────────────────────────────────────────────────────────────
-import { getBattleStats, getItem, typeMultiplier, ENEMIES, BOSS, MOVES, ELEMENTS } from './battle.js'
+import { getBattleStats, getItem, getStatus, typeMultiplier, ENEMIES, BOSS, MOVES, ELEMENTS } from './battle.js'
 
 let _uid = 0
 const uid = () => `c${++_uid}_${Math.floor(Math.random() * 1e6)}`
@@ -21,14 +25,15 @@ export function combatantFromPeep(peep) {
     level: s.level, maxHp: s.maxHp, hp: s.maxHp,
     atk: s.atk, def: s.def, spd: s.spd,
     atkMult: 1, defMult: 1,           // in-battle buff multipliers (reset each battle)
+    status: null,                     // { type, turns } | null
     moves: s.moves,
   }
 }
 
 // Restore a previously-fought ally to a fresh combatant but keep its current HP
-// (HP persists across fights within a run; buffs do not).
+// (HP persists across fights within a run; buffs and status do not).
 export function combatantFromRunMember(m) {
-  return { ...m, uid: uid(), side: 'ally', atkMult: 1, defMult: 1, hp: m.hp }
+  return { ...m, uid: uid(), side: 'ally', atkMult: 1, defMult: 1, status: null, hp: m.hp }
 }
 
 function enemyCombatant(def, level, scale = 1) {
@@ -38,7 +43,7 @@ function enemyCombatant(def, level, scale = 1) {
     name: def.name, emoji: def.emoji, element: def.element, level,
     maxHp: grow(def.base.hp, 5, 1), hp: grow(def.base.hp, 5, 1),
     atk: grow(def.base.atk, 2, 1), def: grow(def.base.def, 1.6, 1), spd: grow(def.base.spd, 1.4, 1),
-    atkMult: 1, defMult: 1,
+    atkMult: 1, defMult: 1, status: null,
     moves: def.moves.map(id => MOVES[id]).filter(Boolean),
   }
 }
@@ -63,6 +68,7 @@ export function buildEnemyTeam(kind, depth) {
 export function initBattle(allyCombatants, enemyCombatants, opts = {}) {
   return {
     kind: opts.kind || 'battle',
+    inventory: [...(opts.inventory || [])],   // run items copied in; consumed here
     ally: allyCombatants,
     enemy: enemyCombatants,
     allyActive: firstAlive(allyCombatants),
@@ -79,9 +85,10 @@ function firstAlive(team) {
   return i === -1 ? 0 : i
 }
 const aliveCount = team => team.filter(c => c.hp > 0).length
-const active = (state, side) => state[side][side === 'ally' ? 'allyActive' : 'enemyActive']
+const activeIdx = (state, side) => state[side === 'ally' ? 'allyActive' : 'enemyActive']
+const activeOf = (state, side) => state[side][activeIdx(state, side)]
 
-// ── Damage ────────────────────────────────────────────────────────────────────
+// ── Damage & status ───────────────────────────────────────────────────────────
 
 function computeDamage(attacker, defender, move) {
   const atk = attacker.atk * attacker.atkMult
@@ -98,8 +105,16 @@ function effectivenessNote(mult) {
   return ''
 }
 
-// Apply one move from `attacker` to the opposing active target. Mutates a cloned
-// state in place (callers pass an already-cloned state).
+// Try to inflict a status on a target (no stacking; existing status blocks it).
+function inflictStatus(state, target, statusId, chance) {
+  if (target.hp <= 0 || target.status) return
+  if (Math.random() > (chance ?? 1)) return
+  const st = getStatus(statusId)
+  target.status = { type: statusId, turns: st.turns }
+  state.log.push({ t: 'info', text: `${target.emoji} ${target.name} was afflicted with ${st.emoji} ${st.name}!` })
+}
+
+// Apply one move from `attacker` to the opposing active target.
 function applyMove(state, attacker, move) {
   if (move.kind === 'heal') {
     const heal = Math.round(attacker.maxHp * move.amount)
@@ -113,36 +128,67 @@ function applyMove(state, attacker, move) {
     state.log.push({ t: attacker.side, text: `${attacker.emoji} ${attacker.name} used ${move.name}! ${move.stat.toUpperCase()} rose.` })
     return
   }
-  // attack
   const defSide = attacker.side === 'ally' ? 'enemy' : 'ally'
-  const target = state[defSide][active(state, defSide)]
+  const target = activeOf(state, defSide)
+  if (move.kind === 'status') {
+    state.log.push({ t: attacker.side, text: `${attacker.emoji} ${attacker.name} used ${move.name}.` })
+    inflictStatus(state, target, move.inflict.status, move.inflict.chance)
+    return
+  }
+  // attack
   const { dmg, typeMult } = computeDamage(attacker, target, move)
   target.hp = Math.max(0, target.hp - dmg)
-  state.log.push({
-    t: attacker.side,
-    text: `${attacker.emoji} ${attacker.name} used ${move.name} — ${dmg} dmg.${effectivenessNote(typeMult)}`,
-  })
-  if (target.hp === 0) {
-    state.log.push({ t: 'info', text: `${target.emoji} ${target.name} fainted!` })
+  state.log.push({ t: attacker.side, text: `${attacker.emoji} ${attacker.name} used ${move.name} — ${dmg} dmg.${effectivenessNote(typeMult)}` })
+  if (target.hp === 0) state.log.push({ t: 'info', text: `${target.emoji} ${target.name} fainted!` })
+  else if (move.inflict) inflictStatus(state, target, move.inflict.status, move.inflict.chance)
+}
+
+// One combatant's action, gated by paralysis. Auto-advances faints afterward.
+function tryAct(state, actor, move) {
+  if (actor.hp <= 0) return
+  if (actor.status?.type === 'paralyze' && Math.random() < getStatus('paralyze').skipChance) {
+    state.log.push({ t: actor.side, text: `⚡ ${actor.emoji} ${actor.name} is paralyzed and can't move!` })
+    return
+  }
+  applyMove(state, actor, move)
+  ensureActive(state, 'ally')
+  ensureActive(state, 'enemy')
+}
+
+// End-of-turn: tick status (damage-over-time + duration) on both actives.
+function tickStatus(state, side) {
+  const c = activeOf(state, side)
+  if (c.hp <= 0 || !c.status) return
+  const st = getStatus(c.status.type)
+  if (st.dot) {
+    const dmg = Math.max(2, Math.round(c.maxHp * st.dot))
+    c.hp = Math.max(0, c.hp - dmg)
+    state.log.push({ t: 'info', text: `${st.emoji} ${c.emoji} ${c.name} took ${dmg} ${st.name} damage.` })
+    if (c.hp === 0) state.log.push({ t: 'info', text: `${c.emoji} ${c.name} fainted!` })
+  }
+  c.status.turns -= 1
+  if (c.status.turns <= 0) {
+    state.log.push({ t: 'info', text: `${c.emoji} ${c.name}'s ${st.name} faded.` })
+    c.status = null
   }
 }
 
-// ── Turn resolution ───────────────────────────────────────────────────────────
-// Player picks an action; we resolve it together with the enemy's action in
-// speed order, then hand control back. Switching forfeits the turn's initiative.
-
-function enemyChooseMove(enemy) {
-  // Prefer a super-effective attack; otherwise random.
-  const attacks = enemy.moves.filter(m => m.kind === 'attack')
-  const pool = attacks.length ? attacks : enemy.moves
-  return pool[Math.floor(Math.random() * pool.length)]
+function endOfTurn(state) {
+  tickStatus(state, 'ally')
+  tickStatus(state, 'enemy')
+  ensureActive(state, 'ally')
+  ensureActive(state, 'enemy')
+  checkOver(state)
 }
 
 function checkOver(state) {
-  if (aliveCount(state.enemy) === 0) { state.over = true; state.result = 'win'; state.awaitingInput = false
-    state.log.push({ t: 'info', text: '🎉 Victory!' }) }
-  else if (aliveCount(state.ally) === 0) { state.over = true; state.result = 'lose'; state.awaitingInput = false
-    state.log.push({ t: 'info', text: '💀 Your team was defeated…' }) }
+  if (aliveCount(state.enemy) === 0) {
+    state.over = true; state.result = 'win'; state.awaitingInput = false
+    state.log.push({ t: 'info', text: '🎉 Victory!' })
+  } else if (aliveCount(state.ally) === 0) {
+    state.over = true; state.result = 'lose'; state.awaitingInput = false
+    state.log.push({ t: 'info', text: '💀 Your team was defeated…' })
+  }
 }
 
 // Auto-advance a side's active slot to the next living member after a faint.
@@ -156,28 +202,47 @@ function ensureActive(state, side) {
   }
 }
 
+function enemyChooseMove(enemy) {
+  // Prefer an offensive option; status/buff moves stay in the pool for variety.
+  const attacks = enemy.moves.filter(m => m.kind === 'attack')
+  const pool = (attacks.length && Math.random() < 0.75) ? attacks : enemy.moves
+  return pool[Math.floor(Math.random() * pool.length)]
+}
+
 function clone(state) {
   return {
     ...state,
-    ally: state.ally.map(c => ({ ...c })),
-    enemy: state.enemy.map(c => ({ ...c })),
+    inventory: [...state.inventory],
+    ally: state.ally.map(c => ({ ...c, status: c.status ? { ...c.status } : null })),
+    enemy: state.enemy.map(c => ({ ...c, status: c.status ? { ...c.status } : null })),
     log: [...state.log],
   }
 }
 
-// Player chose an attack/buff/heal move (id from the active ally's moveset).
+// ── Player actions ────────────────────────────────────────────────────────────
+
+// Player chose an attack/buff/heal/status move (id from the active ally's moveset).
 export function playerMove(prev, moveId) {
   if (prev.over || !prev.awaitingInput) return prev
   const state = clone(prev)
-  const ally = state.ally[state.allyActive]
-  const enemy = state.enemy[state.enemyActive]
+  const ally = activeOf(state, 'ally')
+  const enemy = activeOf(state, 'enemy')
   const playerMv = ally.moves.find(m => m.id === moveId) || ally.moves[0]
   const enemyMv = enemyChooseMove(enemy)
-  resolveTurn(state, { actor: ally, move: playerMv }, { actor: enemy, move: enemyMv })
+
+  // Resolve both actions in speed order.
+  const order = ally.spd >= enemy.spd
+    ? [[ally, playerMv], [enemy, enemyMv]]
+    : [[enemy, enemyMv], [ally, playerMv]]
+  for (const [actor, move] of order) {
+    tryAct(state, actor, move)
+    if (aliveCount(state.enemy) === 0 || aliveCount(state.ally) === 0) break
+  }
+  endOfTurn(state)
   return state
 }
 
-// Player switched the active Peep (forfeits initiative: enemy acts, then done).
+// Player switched the active Peep (forfeits initiative: only the enemy acts).
 export function playerSwitch(prev, allyIndex) {
   if (prev.over || !prev.awaitingInput) return prev
   if (allyIndex === prev.allyActive || prev.ally[allyIndex]?.hp <= 0) return prev
@@ -185,20 +250,20 @@ export function playerSwitch(prev, allyIndex) {
   state.allyActive = allyIndex
   const inMon = state.ally[allyIndex]
   state.log.push({ t: 'ally', text: `🔄 Go, ${inMon.emoji} ${inMon.name}!` })
-  const enemy = state.enemy[state.enemyActive]
-  applyMove(state, enemy, enemyChooseMove(enemy))
-  ensureActive(state, 'ally')
-  checkOver(state)
+  tryAct(state, activeOf(state, 'enemy'), enemyChooseMove(activeOf(state, 'enemy')))
+  endOfTurn(state)
   return state
 }
 
-// Player used a run item on the active (or chosen) ally.
+// Player used a run item on the active (or chosen) ally. Consumes one from the
+// in-battle inventory; using an item costs the turn (the enemy acts).
 export function playerItem(prev, itemId, allyIndex = prev.allyActive) {
   if (prev.over || !prev.awaitingInput) return prev
   const item = getItem(itemId)
-  if (!item) return prev
+  if (!item || !prev.inventory.includes(itemId)) return prev
   const state = clone(prev)
   const target = state.ally[allyIndex]
+
   if (item.kind === 'heal' && target.hp > 0) {
     const heal = item.amount >= 1 ? target.maxHp : Math.round(target.maxHp * item.amount)
     target.hp = Math.min(target.maxHp, target.hp + heal)
@@ -213,28 +278,14 @@ export function playerItem(prev, itemId, allyIndex = prev.allyActive) {
   } else {
     return prev   // invalid use (e.g. revive on a living Peep)
   }
-  // Using an item costs the turn: the enemy gets to act.
-  const enemy = state.enemy[state.enemyActive]
-  applyMove(state, enemy, enemyChooseMove(enemy))
-  ensureActive(state, 'ally')
-  checkOver(state)
+
+  // consume one of that item
+  const idx = state.inventory.indexOf(itemId)
+  if (idx !== -1) state.inventory.splice(idx, 1)
+
+  tryAct(state, activeOf(state, 'enemy'), enemyChooseMove(activeOf(state, 'enemy')))
+  endOfTurn(state)
   return state
-}
-
-// Resolve both combatants' actions for the turn in speed order.
-function resolveTurn(state, playerAction, enemyAction) {
-  const order = playerAction.actor.spd >= enemyAction.actor.spd
-    ? [playerAction, enemyAction]
-    : [enemyAction, playerAction]
-
-  for (const { actor, move } of order) {
-    if (actor.hp <= 0) continue                 // fainted before acting
-    applyMove(state, actor, move)
-    ensureActive(state, 'ally')
-    ensureActive(state, 'enemy')
-    if (aliveCount(state.enemy) === 0 || aliveCount(state.ally) === 0) break
-  }
-  checkOver(state)
 }
 
 export { ELEMENTS }
