@@ -1,0 +1,225 @@
+import React, { useState } from 'react'
+import Nav from './Nav.jsx'
+import Dashboard from './Dashboard.jsx'
+import Gacha from './Gacha.jsx'
+import TeamSelect from './TeamSelect.jsx'
+import BattleMap from './BattleMap.jsx'
+import Battle from './Battle.jsx'
+import { getPeepType, createPeep } from './gameLogic.js'
+import { getBattleStats, rollTreasure, getItem, BOSS_REWARD } from './game/battle.js'
+import { generateMap } from './game/mapGen.js'
+import { combatantFromPeep, combatantFromRunMember, buildEnemyTeam, initBattle } from './game/combat.js'
+
+// ─────────────────────────────────────────────────────────────────────────────
+// The foundational state machine. Routes between the four top-level screens
+// (Habits / Peeps / Shop / Battle) and owns every cross-cutting mutation:
+// gacha pulls, companion/team selection, and the roguelite run lifecycle.
+// ─────────────────────────────────────────────────────────────────────────────
+export default function GameShell({ save, onSave }) {
+  const [view, setView] = useState('habits')
+  const [combat, setCombat] = useState(null)        // { state, node } while a fight is live
+  const [toast, setToast] = useState(null)          // transient reward/info message
+
+  const { coins = 0, peeps = [], activePeepId, teamIds = [], run } = save
+  const teamPeeps = teamIds.map(id => peeps.find(p => p.id === id)).filter(Boolean)
+
+  const flash = (msg) => { setToast(msg); setTimeout(() => setToast(null), 2200) }
+
+  // ── Phase B mutations ───────────────────────────────────────────────────────
+  const handleGachaPull = (newPeep, costPaid) => {
+    onSave({
+      ...save,
+      peeps: [...peeps, newPeep],
+      activePeepId: peeps.length === 0 ? newPeep.id : activePeepId,
+      coins: coins - costPaid,
+    })
+    flash(`Got ${getPeepType(newPeep.typeId).name}! 🎉`)
+  }
+  const setActive = (peepId) => { onSave({ ...save, activePeepId: peepId }); flash('Companion set ⭐') }
+  const setTeam = (ids) => onSave({ ...save, teamIds: ids })
+
+  // ── Phase C: run lifecycle ──────────────────────────────────────────────────
+  const startRun = () => {
+    const map = generateMap()
+    const start = map.nodes.find(n => n.type === 'start')
+    const team = teamPeeps.map(combatantFromPeep)
+    onSave({ ...save, run: { map, position: start.id, reached: [start.id], team, inventory: [], status: 'active' } })
+    flash('Run started! Pick your path ⚔️')
+  }
+  const abandonRun = () => { onSave({ ...save, run: null }); flash('Run abandoned') }
+
+  // Persist updated run team HP + advance to a node.
+  const advanceRun = (patch) => onSave({ ...save, run: { ...run, ...patch } })
+
+  const handleSelectNode = (node) => {
+    if (node.type === 'rest') {
+      const team = run.team.map(c => ({ ...c, hp: Math.min(c.maxHp, c.hp + Math.round(c.maxHp * 0.5)) }))
+      advanceRun({ team, position: node.id, reached: [...run.reached, node.id] })
+      flash('🏕️ Rested — team healed 50%')
+    } else if (node.type === 'treasure') {
+      const itemId = rollTreasure()
+      advanceRun({ inventory: [...run.inventory, itemId], position: node.id, reached: [...run.reached, node.id] })
+      flash(`💎 Found ${getItem(itemId).emoji} ${getItem(itemId).name}!`)
+    } else {
+      // battle / elite / boss — enter combat
+      const depth = node.layer
+      const allies = run.team.map(combatantFromRunMember)
+      const enemies = buildEnemyTeam(node.type === 'boss' ? 'boss' : node.type === 'elite' ? 'elite' : 'battle', depth)
+      setCombat({ state: initBattle(allies, enemies, { kind: node.type }), node })
+    }
+  }
+
+  // Combat finished → write HP back, grant rewards, advance or end the run.
+  const handleCombatResolve = (result, finalAllies) => {
+    const node = combat.node
+    setCombat(null)
+
+    if (result === 'lose') {
+      onSave({ ...save, run: { ...run, status: 'lost' } })
+      flash('💀 Your team fell in the dungeon…')
+      return
+    }
+
+    // carry HP back into the run team (match by peepId)
+    const team = run.team.map(m => {
+      const fa = finalAllies.find(a => a.peepId === m.peepId)
+      return fa ? { ...m, hp: fa.hp } : m
+    })
+
+    // rewards scale with node type
+    const reward = node.type === 'boss' ? { coins: 200, xp: 220 }
+      : node.type === 'elite' ? { coins: 40, xp: 80 }
+      : { coins: 18, xp: 45 }
+
+    // grant XP to every team peep (feeds Phase A growth) + Gold
+    const grownPeeps = peeps.map(p =>
+      teamIds.includes(p.id) ? { ...p, xp: p.xp + reward.xp } : p)
+
+    if (node.type === 'boss') {
+      // permanent, high-value reward
+      const trophyPeep = createPeep(BOSS_REWARD.peepTypeId, 'Boss Slayer')
+      onSave({
+        ...save,
+        peeps: [...grownPeeps, trophyPeep],
+        coins: coins + reward.coins + BOSS_REWARD.coins,
+        trophies: [...(save.trophies || []), { name: 'Chaos Hydra', peepId: trophyPeep.id, at: Date.now() }],
+        run: { ...run, team, status: 'won' },
+      })
+      flash(`🏆 BOSS DOWN! +${reward.coins + BOSS_REWARD.coins}💰 & a ${getPeepType(BOSS_REWARD.peepTypeId).name}!`)
+    } else {
+      onSave({
+        ...save,
+        peeps: grownPeeps,
+        coins: coins + reward.coins,
+        run: { ...run, team, position: node.id, reached: [...run.reached, node.id] },
+      })
+      flash(`Victory! +${reward.coins}💰  +${reward.xp} XP to team`)
+    }
+  }
+
+  // ── Render ──────────────────────────────────────────────────────────────────
+
+  // Live combat takes over the whole screen (no nav).
+  if (combat) {
+    return <Battle initialState={combat.state} inventory={run.inventory} onResolve={handleCombatResolve} />
+  }
+
+  const screen = (() => {
+    if (view === 'habits') return <Dashboard save={save} onSave={onSave} onNavigate={setView} />
+    if (view === 'shop') return <Gacha coins={coins} onPull={handleGachaPull} onClose={() => setView('habits')} />
+    if (view === 'peeps') return (
+      <TeamSelect peeps={peeps} activePeepId={activePeepId} teamIds={teamIds}
+        onSetActive={setActive} onSetTeam={setTeam} />
+    )
+    return <BattleView save={save} run={run} teamPeeps={teamPeeps}
+      onStart={startRun} onAbandon={abandonRun} onSelectNode={handleSelectNode}
+      onEndRun={() => onSave({ ...save, run: null })} onGoto={setView} />
+  })()
+
+  return (
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+      {toast && <div style={{
+        position: 'absolute', top: 12, left: '50%', transform: 'translateX(-50%)', zIndex: 50,
+        background: 'var(--accent-sun)', color: '#1a1a2e', padding: '8px 16px', borderRadius: 50,
+        fontSize: 12, fontWeight: 900, boxShadow: '0 4px 20px rgba(249,200,70,0.4)', whiteSpace: 'nowrap',
+        maxWidth: '90%', overflow: 'hidden', textOverflow: 'ellipsis',
+      }}>{toast}</div>}
+      <div style={{ flex: 1, minHeight: 0 }}>{screen}</div>
+      <Nav view={view} onNavigate={setView} teamCount={teamIds.length} inRun={run?.status === 'active'} />
+    </div>
+  )
+}
+
+// ── Battle tab: gate → intro → map → end screens ───────────────────────────────
+function BattleView({ run, teamPeeps, onStart, onAbandon, onSelectNode, onEndRun, onGoto }) {
+  // Gate: need a full team of 3.
+  if (teamPeeps.length < 3) {
+    return (
+      <CenterCard emoji="⚔️" title="Assemble Your Squad"
+        body={`The dungeon demands a team of exactly 3 Peeps. You have ${teamPeeps.length}/3 selected.`}
+        action={teamPeeps.length < 3 ? { label: '🐣 Go to Peeps', onClick: () => onGoto('peeps') } : null} />
+    )
+  }
+
+  // End screens.
+  if (run?.status === 'won') {
+    return <CenterCard emoji="🏆" title="Dungeon Cleared!"
+      body="You defeated the Chaos Hydra and claimed a permanent reward. Glory to your Peeps!"
+      action={{ label: 'Return Home', onClick: onEndRun }} />
+  }
+  if (run?.status === 'lost') {
+    return <CenterCard emoji="💀" title="Run Failed"
+      body="Your team was defeated. Level up your Peeps with habits and try again."
+      action={{ label: 'Leave Dungeon', onClick: onEndRun }} />
+  }
+
+  // No active run → intro with team preview.
+  if (!run) {
+    return (
+      <div style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center',
+        alignItems: 'center', padding: 24, gap: 16, background: 'var(--bg-deep)', textAlign: 'center' }}>
+        <div style={{ fontSize: 54 }}>🗺️</div>
+        <div style={{ fontSize: 18, fontWeight: 900, color: 'var(--accent-rose)' }}>Enter the Dungeon</div>
+        <div style={{ fontSize: 13, color: 'var(--text-muted)', fontWeight: 600, maxWidth: 280 }}>
+          A procedurally-generated path of battles, treasures, and rest stops leads to the Final Boss.
+        </div>
+        <div style={{ display: 'flex', gap: 14, margin: '8px 0' }}>
+          {teamPeeps.map(p => {
+            const s = getBattleStats(p)
+            return (
+              <div key={p.id} style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: 40 }}>{s.emoji}</div>
+                <div style={{ fontSize: 11, fontWeight: 800, color: 'var(--text-main)' }}>{p.name}</div>
+                <div style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 700 }}>Lv.{s.level} · ❤️{s.maxHp}</div>
+              </div>
+            )
+          })}
+        </div>
+        <button onClick={onStart} style={{ padding: '13px 30px', borderRadius: 50, fontSize: 15, fontWeight: 900,
+          background: 'var(--accent-rose)', color: 'white', cursor: 'pointer', boxShadow: '0 4px 18px rgba(232,118,138,0.4)' }}>
+          ⚔️ Start Run
+        </button>
+      </div>
+    )
+  }
+
+  // Active run → the map.
+  return <BattleMap run={run} onSelectNode={onSelectNode} onAbandon={onAbandon} />
+}
+
+function CenterCard({ emoji, title, body, action }) {
+  return (
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center',
+      alignItems: 'center', padding: 28, gap: 14, background: 'var(--bg-deep)', textAlign: 'center' }}>
+      <div style={{ fontSize: 56 }}>{emoji}</div>
+      <div style={{ fontSize: 18, fontWeight: 900, color: 'var(--accent-sun)' }}>{title}</div>
+      <div style={{ fontSize: 13, color: 'var(--text-muted)', fontWeight: 600, maxWidth: 300 }}>{body}</div>
+      {action && (
+        <button onClick={action.onClick} style={{ marginTop: 6, padding: '12px 26px', borderRadius: 50,
+          fontSize: 14, fontWeight: 900, background: 'var(--accent-sun)', color: '#1a1a2e', cursor: 'pointer' }}>
+          {action.label}
+        </button>
+      )}
+    </div>
+  )
+}

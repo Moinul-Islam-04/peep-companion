@@ -125,10 +125,13 @@ export function getDefaultSave() {
     coins: 0,
     activePeepId: starterPeep.id,
     peeps: [starterPeep],  // Array of owned peeps
+    teamIds: [],     // up to 3 peep ids chosen for the battle team (Phase C)
     tasks: [],       // { id, label, type, goal, unit, completedToday, totalCompleted }
     log: [],         // { timestamp, taskId, label, xpEarned, coinsEarned }
     streak: 0,
     lastStreakDate: null,
+    run: null,       // active roguelite run (Phase C), else null
+    trophies: [],    // permanent boss rewards
   }
 }
 

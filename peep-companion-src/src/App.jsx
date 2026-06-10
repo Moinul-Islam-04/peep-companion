@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Onboarding from './Onboarding.jsx'
-import Dashboard from './Dashboard.jsx'
+import GameShell from './GameShell.jsx'
 import MiniPeep from './MiniPeep.jsx'
 import { getDefaultSave, decayHappiness, isSameDay } from './gameLogic.js'
 
@@ -38,7 +38,13 @@ export default function App() {
             coins: data.coins || 0
           }
         }
-        
+
+        // Ensure Phase B/C fields exist on older saves
+        migratedData = {
+          teamIds: [], run: null, trophies: [],
+          ...migratedData,
+        }
+
         // Apply happiness decay to active peep
         const activePeep = migratedData.peeps?.find(p => p.id === migratedData.activePeepId) || migratedData.peeps?.[0]
         if (activePeep) {
@@ -137,7 +143,7 @@ export default function App() {
       <div style={{ flex:1, overflow:'hidden', display:'flex', flexDirection:'column' }}>
         {!save?.onboarded
           ? <Onboarding onComplete={handleOnboardingComplete} />
-          : <Dashboard save={save} onSave={handleSave} />
+          : <GameShell save={save} onSave={handleSave} />
         }
       </div>
     </div>

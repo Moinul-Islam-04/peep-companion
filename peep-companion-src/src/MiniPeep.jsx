@@ -209,8 +209,8 @@ export default function MiniPeep({ save, onSave }) {
         color: '#aaa'
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <span>XP: {peep.xp}</span>
-          <span style={{ color: moodColors[mood] }}>♥ {peep.happiness}%</span>
+          <span>XP: {activePeep?.xp ?? 0}</span>
+          <span style={{ color: moodColors[mood] }}>♥ {activePeep?.happiness ?? 0}%</span>
         </div>
       </div>
     </div>

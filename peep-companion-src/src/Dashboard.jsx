@@ -2,10 +2,8 @@ import React, { useState, useEffect, useRef } from 'react'
 import PeepCharacter from './PeepCharacter.jsx'
 import { getStage, getNextStage, getMoodLevel, isSameDay, getPeepType } from './gameLogic.js'
 import { GOAL_TEMPLATES } from './goalTemplates.js'
-import Gacha from './Gacha.jsx'
-import PeepCollection from './PeepCollection.jsx'
 
-export default function Dashboard({ save, onSave }) {
+export default function Dashboard({ save, onSave, onNavigate }) {
   const [animating, setAnimating] = useState(false)
   const [celebrateMsg, setCelebrateMsg] = useState(null)
   const [activeTimer, setActiveTimer] = useState(null)
@@ -14,8 +12,6 @@ export default function Dashboard({ save, onSave }) {
   const [particles, setParticles] = useState([])
   const [showAddTask, setShowAddTask] = useState(false)
   const [addTaskConfig, setAddTaskConfig] = useState({})
-  const [showGacha, setShowGacha] = useState(false)
-  const [showCollection, setShowCollection] = useState(false)
   const timerRef = useRef(null)
 
   const { coins = 0, peeps = [], activePeepId, profile, tasks, log, streak } = save
@@ -169,24 +165,6 @@ export default function Dashboard({ save, onSave }) {
     setAddTaskConfig(prev => ({ ...prev, [id]: { ...prev[id], [field]: val } }))
   }
 
-  const handleGachaPull = (newPeep, costPaid) => {
-    const updatedPeeps = [...peeps, newPeep]
-    // If this is the first peep, make it active
-    const newActivePeepId = peeps.length === 0 ? newPeep.id : activePeepId
-    onSave({ 
-      ...save, 
-      peeps: updatedPeeps, 
-      activePeepId: newActivePeepId,
-      coins: coins - costPaid 
-    })
-    triggerCelebration(`Got ${getPeepType(newPeep.typeId).name}!`, 0)
-  }
-
-  const handleSwitchPeep = (peepId) => {
-    onSave({ ...save, activePeepId: peepId })
-    setShowCollection(false)
-  }
-
   const moodColors = {
     ecstatic: 'var(--accent-sun)', happy: 'var(--accent-mint)',
     neutral: 'var(--accent-sky)', sad: 'var(--accent-rose)', neglected: 'var(--text-muted)'
@@ -197,16 +175,6 @@ export default function Dashboard({ save, onSave }) {
   }
 
   const allTasksDone = tasks.every(t => t.completedToday >= t.goal)
-
-  // Show gacha view if open
-  if (showGacha) {
-    return <Gacha coins={coins} onPull={handleGachaPull} onClose={() => setShowGacha(false)} />
-  }
-
-  // Show collection view if open
-  if (showCollection) {
-    return <PeepCollection peeps={peeps} activePeepId={activePeepId} onSwitchPeep={handleSwitchPeep} onClose={() => setShowCollection(false)} />
-  }
 
   return (
     <div style={{ height:'100%', display:'flex', flexDirection:'column', background:'var(--bg-deep)', position:'relative', overflow:'hidden' }}>
@@ -284,7 +252,7 @@ export default function Dashboard({ save, onSave }) {
             <div style={{ fontSize:11, color:'var(--text-muted)', fontWeight:700 }}>
               {streak > 0 ? `🔥 ${streak} day streak` : 'No streak yet'}
             </div>
-            <button onClick={() => setShowCollection(true)} style={{
+            <button onClick={() => onNavigate?.('peeps')} style={{
               padding: '4px 10px',
               background: 'rgba(110,219,176,0.15)',
               border: '1px solid var(--accent-mint)',
@@ -298,7 +266,7 @@ export default function Dashboard({ save, onSave }) {
               🐣 {peeps.length}
             </button>
           </div>
-          <button onClick={() => setShowGacha(true)} style={{
+          <button onClick={() => onNavigate?.('shop')} style={{
             padding: '6px 12px',
             background: 'rgba(249,200,70,0.2)',
             border: '1px solid var(--accent-sun)',
