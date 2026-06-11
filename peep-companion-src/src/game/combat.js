@@ -42,19 +42,22 @@ function enemyCombatant(def, level, scale = 1) {
     uid: uid(), peepId: null, side: 'enemy',
     name: def.name, emoji: def.emoji, element: def.element, level,
     maxHp: grow(def.base.hp, 5, 1), hp: grow(def.base.hp, 5, 1),
-    atk: grow(def.base.atk, 2, 1), def: grow(def.base.def, 1.6, 1), spd: grow(def.base.spd, 1.4, 1),
+    atk: grow(def.base.atk, 1.6, 1), def: grow(def.base.def, 1.6, 1), spd: grow(def.base.spd, 1.4, 1),
     atkMult: 1, defMult: 1, status: null,
     moves: def.moves.map(id => MOVES[id]).filter(Boolean),
   }
 }
 
 // Build an enemy team for a node. kind: 'battle' | 'elite' | 'boss'.
-export function buildEnemyTeam(kind, depth) {
-  const level = Math.max(1, 2 + depth * 2)
-  if (kind === 'boss') return [enemyCombatant(BOSS, level + 3, 1.0)]
+// `tier` is the run's ascension tier (1 = first clear); higher tiers raise enemy
+// level and stats so cleared dungeons stay a challenge on repeat runs.
+export function buildEnemyTeam(kind, depth, tier = 1, boss = BOSS) {
+  const level = Math.max(1, 1 + depth + (tier - 1) * 2)
+  const tierScale = 1 + (tier - 1) * 0.12
+  if (kind === 'boss') return [enemyCombatant(boss, level + 2, tierScale)]
   const roster = Object.values(ENEMIES)
   const count = kind === 'elite' ? 3 : 1 + (depth > 1 ? 1 : 0)
-  const scale = kind === 'elite' ? 1.25 : 1
+  const scale = (kind === 'elite' ? 1.25 : 1) * tierScale
   const team = []
   for (let i = 0; i < count; i++) {
     const def = roster[Math.floor(Math.random() * roster.length)]

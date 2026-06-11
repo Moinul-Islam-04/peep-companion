@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import PeepCharacter from './PeepCharacter.jsx'
-import { getStage, getNextStage, getMoodLevel, isSameDay, getPeepType } from './gameLogic.js'
+import { getStage, getNextStage, getMoodLevel, isSameDay, getPeepType, applyHabitReward, applyStreak } from './gameLogic.js'
 import { GOAL_TEMPLATES } from './goalTemplates.js'
 
 export default function Dashboard({ save, onSave, onNavigate }) {
@@ -54,16 +54,6 @@ export default function Dashboard({ save, onSave, onNavigate }) {
     const xpGained = justCompleted ? 25 : 5
     const coinsEarned = justCompleted ? 5 : 1
 
-    const newHappiness = Math.min(100, activePeep.happiness + (justCompleted ? 15 : 5))
-    const newXP = activePeep.xp + xpGained
-    const newCoins = coins + coinsEarned
-
-    const updatedPeeps = peeps.map(p =>
-      p.id === activePeepId
-        ? { ...p, xp: newXP, happiness: newHappiness, lastCheckin: Date.now() }
-        : p
-    )
-
     const newTasks = tasks.map(t =>
       t.id === task.id ? { ...t, completedToday: newCompleted, totalCompleted: t.totalCompleted + 1 } : t
     )
@@ -72,7 +62,8 @@ export default function Dashboard({ save, onSave, onNavigate }) {
       ...log.slice(0, 49)
     ]
 
-    onSave({ ...save, peeps: updatedPeeps, tasks: newTasks, log: newLog, coins: newCoins })
+    const rewarded = applyHabitReward(save, { xp: xpGained, coins: coinsEarned, happiness: justCompleted ? 15 : 5 })
+    onSave(applyStreak({ ...rewarded, tasks: newTasks, log: newLog }))
     triggerCelebration(justCompleted ? `🎯 ${task.label} done!` : `+${xpGained} XP • +${coinsEarned} 💰`, xpGained, coinsEarned)
   }
 
@@ -103,15 +94,7 @@ export default function Dashboard({ save, onSave, onNavigate }) {
 
     const xpGained = Math.min(40, Math.floor(minutesCompleted / 5) * 5 + (justCompleted ? 25 : 0))
     const coinsEarned = Math.floor(minutesCompleted / 10) + (justCompleted ? 3 : 0)
-    const newHappiness = Math.min(100, activePeep.happiness + (justCompleted ? 15 : Math.min(8, Math.floor(minutesCompleted/5)*2)))
-    const newXP = activePeep.xp + xpGained
-    const newCoins = coins + coinsEarned
-
-    const updatedPeeps = peeps.map(p =>
-      p.id === activePeepId
-        ? { ...p, xp: newXP, happiness: newHappiness, lastCheckin: Date.now() }
-        : p
-    )
+    const happinessBump = justCompleted ? 15 : Math.min(8, Math.floor(minutesCompleted/5)*2)
 
     const newTasks = tasks.map(t =>
       t.id === task.id ? { ...t, completedToday: newMinutes, totalCompleted: t.totalCompleted + minutesCompleted } : t
@@ -121,7 +104,8 @@ export default function Dashboard({ save, onSave, onNavigate }) {
       ...log.slice(0, 49)
     ]
 
-    onSave({ ...save, peeps: updatedPeeps, tasks: newTasks, log: newLog, coins: newCoins })
+    const rewarded = applyHabitReward(save, { xp: xpGained, coins: coinsEarned, happiness: happinessBump })
+    onSave(applyStreak({ ...rewarded, tasks: newTasks, log: newLog }))
     if (xpGained > 0) triggerCelebration(justCompleted ? `🎯 ${task.label} done!` : `+${minutesCompleted}min logged!`, xpGained, coinsEarned)
   }
 

@@ -1,3 +1,5 @@
+import { SAVE_VERSION } from './saveMigrations.js'
+
 // Peep stages based on XP
 export const STAGES = [
   { name: 'Egg',        minXP: 0,    emoji: '🥚', description: 'Just getting started!' },
@@ -82,7 +84,9 @@ export function getMoodLevel(happiness) {
 }
 
 export function getPeepType(typeId) {
-  return PEEP_TYPES.find(t => t.id === typeId)
+  // Fall back to the default species so legacy/corrupt peeps (e.g. saves that
+  // predate the gacha and have no typeId) never crash a view that reads .rarity.
+  return PEEP_TYPES.find(t => t.id === typeId) || PEEP_TYPES[0]
 }
 
 export function createPeep(typeId, name = null) {
@@ -120,6 +124,7 @@ export function performGachaPull(boxId) {
 export function getDefaultSave() {
   const starterPeep = createPeep('golden', 'Your First Peep')
   return {
+    version: SAVE_VERSION,
     onboarded: false,
     profile: { name: '', peepName: 'Peep' },
     coins: 0,
@@ -132,7 +137,49 @@ export function getDefaultSave() {
     lastStreakDate: null,
     run: null,       // active roguelite run (Phase C), else null
     trophies: [],    // permanent boss rewards
+    bestTier: 0,     // highest dungeon tier cleared (ascension progress)
   }
+}
+
+// Fraction of habit XP that flows to (non-active) battle-team members, so doing
+// real-life habits levels your whole dungeon squad — not just the companion.
+export const TEAM_XP_SHARE = 0.5
+
+// Apply a habit reward to a save: the active companion gets full XP + a happiness
+// bump, every other battle-team member gets a share of the XP, and coins are
+// added. Returns a new save (peeps + coins only — callers handle tasks/log/streak).
+export function applyHabitReward(save, { xp = 0, coins = 0, happiness = 0 }) {
+  const now = Date.now()
+  const teamSet = new Set(save.teamIds || [])
+  const teamShare = Math.round(xp * TEAM_XP_SHARE)
+
+  const peeps = (save.peeps || []).map(p => {
+    if (p.id === save.activePeepId) {
+      return { ...p, xp: p.xp + xp, happiness: Math.min(100, p.happiness + happiness), lastCheckin: now }
+    }
+    if (teamSet.has(p.id) && teamShare > 0) {
+      return { ...p, xp: p.xp + teamShare }
+    }
+    return p
+  })
+
+  return { ...save, peeps, coins: (save.coins || 0) + coins }
+}
+
+// Advance the daily streak when every task for the day is complete. Counts once
+// per day; continues the streak if yesterday qualified, otherwise restarts at 1.
+// Call after updating tasks (pass the save that already holds the new task state).
+export function applyStreak(save) {
+  const today = new Date().toDateString()
+  if (save.lastStreakDate === today) return save        // already counted today
+  const tasks = save.tasks || []
+  const allDone = tasks.length > 0 && tasks.every(t => t.completedToday >= t.goal)
+  if (!allDone) return save
+
+  const yesterday = new Date()
+  yesterday.setDate(yesterday.getDate() - 1)
+  const continues = save.lastStreakDate && isSameDay(save.lastStreakDate, yesterday.getTime())
+  return { ...save, streak: continues ? (save.streak || 0) + 1 : 1, lastStreakDate: today }
 }
 
 export function decayHappiness(save) {

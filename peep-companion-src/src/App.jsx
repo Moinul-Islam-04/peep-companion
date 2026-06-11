@@ -3,6 +3,8 @@ import Onboarding from './Onboarding.jsx'
 import GameShell from './GameShell.jsx'
 import MiniPeep from './MiniPeep.jsx'
 import { getDefaultSave, decayHappiness, isSameDay } from './gameLogic.js'
+import { migrateSave } from './saveMigrations.js'
+import ErrorBoundary from './ErrorBoundary.jsx'
 
 const isMock = !window.electronAPI
 
@@ -26,25 +28,8 @@ export default function App() {
     setIsMiniMode(params.get('mini') === 'true')
 
     api.loadData().then(data => {
-      if (data && data.onboarded) {
-        // Migrate old save format if needed
-        let migratedData = data
-        if (data.peep && !data.peeps) {
-          // Migrate from single peep to peeps array
-          migratedData = {
-            ...data,
-            peeps: [{ ...data.peep, id: data.peep.id || ('peep_' + Date.now()) }],
-            activePeepId: data.peep.id || ('peep_' + Date.now()),
-            coins: data.coins || 0
-          }
-        }
-
-        // Ensure Phase B/C fields exist on older saves
-        migratedData = {
-          teamIds: [], run: null, trophies: [],
-          ...migratedData,
-        }
-
+      const migratedData = migrateSave(data)
+      if (migratedData && migratedData.onboarded) {
         // Apply happiness decay to active peep
         const activePeep = migratedData.peeps?.find(p => p.id === migratedData.activePeepId) || migratedData.peeps?.[0]
         if (activePeep) {
@@ -66,7 +51,11 @@ export default function App() {
             streak = 0 // broke streak
           }
         }
-        setSave({ ...migratedData, streak })
+        const finalSave = { ...migratedData, streak }
+        setSave(finalSave)
+        // Persist once on load so the migration + version + decay are written
+        // back (heals the on-disk file and refreshes the .bak with a good copy).
+        api.saveData(finalSave)
       } else {
         setSave(getDefaultSave())
       }
@@ -141,10 +130,12 @@ export default function App() {
 
       {/* Main content */}
       <div style={{ flex:1, overflow:'hidden', display:'flex', flexDirection:'column' }}>
-        {!save?.onboarded
-          ? <Onboarding onComplete={handleOnboardingComplete} />
-          : <GameShell save={save} onSave={handleSave} />
-        }
+        <ErrorBoundary>
+          {!save?.onboarded
+            ? <Onboarding onComplete={handleOnboardingComplete} />
+            : <GameShell save={save} onSave={handleSave} />
+          }
+        </ErrorBoundary>
       </div>
     </div>
   )

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import PeepCharacter from './PeepCharacter.jsx'
-import { getStage, getMoodLevel, getPeepType } from './gameLogic.js'
+import { getStage, getMoodLevel, getPeepType, applyHabitReward, applyStreak } from './gameLogic.js'
 
 const isMock = !window.electronAPI
 const api = isMock ? {
@@ -40,25 +40,12 @@ export default function MiniPeep({ save, onSave }) {
     const xpGained = justCompleted ? 25 : 5
     const coinsEarned = justCompleted ? 5 : 1
 
-    const newHappiness = Math.min(100, activePeep.happiness + (justCompleted ? 15 : 5))
-    const newXP = activePeep.xp + xpGained
-
-    const updatedPeeps = peeps.map(p =>
-      p.id === activePeepId
-        ? { ...p, xp: newXP, happiness: newHappiness, lastCheckin: Date.now() }
-        : p
-    )
-
     const newTasks = tasks.map(t =>
       t.id === task.id ? { ...t, completedToday: newCompleted, totalCompleted: t.totalCompleted + 1 } : t
     )
 
-    onSave({ 
-      ...save, 
-      tasks: newTasks, 
-      peeps: updatedPeeps,
-      coins: (save.coins || 0) + coinsEarned
-    })
+    const rewarded = applyHabitReward(save, { xp: xpGained, coins: coinsEarned, happiness: justCompleted ? 15 : 5 })
+    onSave(applyStreak({ ...rewarded, tasks: newTasks }))
 
     triggerCelebration(justCompleted ? `🎯 ${task.label}!` : `+${xpGained}`)
   }

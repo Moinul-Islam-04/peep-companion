@@ -19,13 +19,14 @@ data schemas, and state machine.
 <img src="docs/screenshots/1-habit-tracker.png" width="300" align="right" />
 
 Your home screen. Create count-based goals (*"Apply to 3 jobs"*) or timed sessions (*"Study 45 min"*).
-Every completion awards **Gold** and grants **XP to your active Peep**, raising its happiness and
-pushing it toward its next growth stage. A daily **streak** keeps you honest, and an activity log
-records everything you've earned.
+Every completion awards **Gold** and **XP**, raising happiness and pushing your Peep toward its next
+growth stage. Finish all your tasks to extend your daily **streak**, and an activity log records
+everything you've earned.
 
 - ✅ Custom tasks with per-day goals that reset at midnight
-- 💰 Gold + ⚡ XP rewards on every check-in
-- 🔥 Streaks, happiness decay, and a live XP / happiness readout
+- 💰 Gold + ⚡ XP on every check-in — XP feeds your **whole battle team**, not just the companion
+- 🔥 Daily streaks (advance by clearing the day), happiness decay, live XP / happiness readout
+- 🔔 A native **daily reminder** nudges you at 7 PM if tasks remain
 - 🐤 A floating "mini" companion window (system tray) for quick check-ins
 
 <br clear="all" />
@@ -61,7 +62,8 @@ Rarer Peeps come with stronger base stats and flashier evolutions — the reward
 ### Phase C — Enter the Dungeon
 <img src="docs/screenshots/4-run-start.png" width="300" align="right" />
 
-With a full team of 3, the dungeon unlocks. Each run is a fresh, procedurally-generated gauntlet.
+With a full team of 3, the dungeon unlocks. Each run is a fresh, procedurally-generated gauntlet at an
+**ascension tier** — every run pushes one tier past your best, scaling difficulty *and* rewards.
 Before diving in you see your squad's levels and HP — the team you built through weeks of habits.
 
 HP and items carry **between fights within a run**, but reset when the run ends, so every dive is a
@@ -87,11 +89,12 @@ Pokémon-style battles with your team of 3 vs. enemy monsters. Pick **moves**, *
 Peeps, or use **items** — speed decides turn order, and an **elemental type chart** (fire/water/
 grass/electric) rewards smart matchups.
 
-- 🔥 **Status effects** — burn, poison, and paralysis with damage-over-time and skipped turns
+- 🔥 **Status effects** — burn, poison, paralysis, and frostbite (damage-over-time + skipped turns)
 - 💖 **Items** — potions, stat tonics, and revives (consumed from your run inventory)
 - 💾 **Mid-fight persistence** — a fight lives in your save, so closing the app mid-battle resumes
   it exactly where you left off
-- 🏆 Beating the boss drops a permanent, high-value Peep + Gold
+- 🐲 **Boss variety** — each run draws one of several themed bosses, dropping a pre-leveled themed Peep
+- 🏆 Clearing a tier banks ascension progress + permanent rewards; the next run unlocks a tougher tier
 
 <br clear="all" />
 

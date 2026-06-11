@@ -47,6 +47,9 @@ export default function TeamSelect({ peeps, activePeepId, teamIds, onSetActive, 
             {teamIds.length}/3 {teamIds.length === 3 ? '✓ ready' : ''}
           </span>
         </div>
+        <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--accent-sky)', marginTop: 6 }}>
+          💡 Completing habits trains your whole battle team — not just your companion.
+        </div>
       </div>
 
       {/* List */}

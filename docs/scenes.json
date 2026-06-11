@@ -2,73 +2,74 @@
   {
     "name": "1-habit-tracker",
     "save": {
+      "version": 2,
       "onboarded": true,
       "profile": {
         "name": "Mahi",
         "peepName": "Blaze"
       },
       "coins": 320,
-      "activePeepId": "phoenix_1781053506371_5nml1748y",
+      "activePeepId": "phoenix_1781156678763_yt7sv567e",
       "peeps": [
         {
-          "id": "phoenix_1781053506371_5nml1748y",
+          "id": "phoenix_1781156678763_yt7sv567e",
           "typeId": "phoenix",
           "name": "Blaze",
           "xp": 1850,
           "happiness": 92,
-          "lastCheckin": 1781053506371,
-          "createdAt": 1781053506371
+          "lastCheckin": 1781156678763,
+          "createdAt": 1781156678763
         },
         {
-          "id": "lunar_1781053506371_5aff9983p",
+          "id": "lunar_1781156678763_brwm8ok4g",
           "typeId": "lunar",
           "name": "Selene",
           "xp": 980,
           "happiness": 92,
-          "lastCheckin": 1781053506371,
-          "createdAt": 1781053506371
+          "lastCheckin": 1781156678763,
+          "createdAt": 1781156678763
         },
         {
-          "id": "cosmic_1781053506371_uzaitgny9",
+          "id": "cosmic_1781156678763_j9619a71c",
           "typeId": "cosmic",
           "name": "Cosmo",
           "xp": 540,
           "happiness": 92,
-          "lastCheckin": 1781053506371,
-          "createdAt": 1781053506371
+          "lastCheckin": 1781156678763,
+          "createdAt": 1781156678763
         },
         {
-          "id": "rose_1781053506371_l0zezm6k8",
+          "id": "rose_1781156678763_lua66j9ea",
           "typeId": "rose",
           "name": "Thorn",
           "xp": 240,
           "happiness": 92,
-          "lastCheckin": 1781053506371,
-          "createdAt": 1781053506371
+          "lastCheckin": 1781156678763,
+          "createdAt": 1781156678763
         },
         {
-          "id": "golden_1781053506371_7jc4in58g",
+          "id": "golden_1781156678763_o75vyco7h",
           "typeId": "golden",
           "name": "Sunny",
           "xp": 110,
           "happiness": 92,
-          "lastCheckin": 1781053506371,
-          "createdAt": 1781053506371
+          "lastCheckin": 1781156678763,
+          "createdAt": 1781156678763
         },
         {
-          "id": "mint_1781053506371_z16kditzv",
+          "id": "mint_1781156678763_u0si00s92",
           "typeId": "mint",
           "name": "Sprout",
           "xp": 50,
           "happiness": 92,
-          "lastCheckin": 1781053506371,
-          "createdAt": 1781053506371
+          "lastCheckin": 1781156678763,
+          "createdAt": 1781156678763
         }
       ],
       "teamIds": [
-        "phoenix_1781053506371_5nml1748y",
-        "lunar_1781053506371_5aff9983p",
-        "cosmic_1781053506371_uzaitgny9"
+        "phoenix_1781156678763_yt7sv567e",
+        "lunar_1781156678763_brwm8ok4g",
+        "cosmic_1781156678763_j9619a71c"
       ],
       "tasks": [
         {
@@ -118,7 +119,7 @@
       ],
       "log": [
         {
-          "timestamp": 1781049906372,
+          "timestamp": 1781153078764,
           "taskId": "t_ex",
           "label": "Exercise",
           "icon": "🏃",
@@ -127,7 +128,7 @@
           "note": "🎯 Goal reached!"
         },
         {
-          "timestamp": 1781046306372,
+          "timestamp": 1781149478764,
           "taskId": "t_jobs",
           "label": "Job Applications",
           "icon": "📋",
@@ -136,7 +137,7 @@
           "note": null
         },
         {
-          "timestamp": 1781044506372,
+          "timestamp": 1781147678764,
           "taskId": "t_lc",
           "label": "LeetCode Problems",
           "icon": "💻",
@@ -146,82 +147,84 @@
         }
       ],
       "streak": 7,
-      "lastStreakDate": "Tue Jun 09 2026",
+      "lastStreakDate": "Thu Jun 11 2026",
       "run": null,
       "trophies": [],
-      "lastReset": "Tue Jun 09 2026"
+      "bestTier": 0,
+      "lastReset": "Thu Jun 11 2026"
     },
     "nav": null
   },
   {
     "name": "2-peeps-team",
     "save": {
+      "version": 2,
       "onboarded": true,
       "profile": {
         "name": "Mahi",
         "peepName": "Blaze"
       },
       "coins": 320,
-      "activePeepId": "phoenix_1781053506371_5nml1748y",
+      "activePeepId": "phoenix_1781156678763_yt7sv567e",
       "peeps": [
         {
-          "id": "phoenix_1781053506371_5nml1748y",
+          "id": "phoenix_1781156678763_yt7sv567e",
           "typeId": "phoenix",
           "name": "Blaze",
           "xp": 1850,
           "happiness": 92,
-          "lastCheckin": 1781053506371,
-          "createdAt": 1781053506371
+          "lastCheckin": 1781156678763,
+          "createdAt": 1781156678763
         },
         {
-          "id": "lunar_1781053506371_5aff9983p",
+          "id": "lunar_1781156678763_brwm8ok4g",
           "typeId": "lunar",
           "name": "Selene",
           "xp": 980,
           "happiness": 92,
-          "lastCheckin": 1781053506371,
-          "createdAt": 1781053506371
+          "lastCheckin": 1781156678763,
+          "createdAt": 1781156678763
         },
         {
-          "id": "cosmic_1781053506371_uzaitgny9",
+          "id": "cosmic_1781156678763_j9619a71c",
           "typeId": "cosmic",
           "name": "Cosmo",
           "xp": 540,
           "happiness": 92,
-          "lastCheckin": 1781053506371,
-          "createdAt": 1781053506371
+          "lastCheckin": 1781156678763,
+          "createdAt": 1781156678763
         },
         {
-          "id": "rose_1781053506371_l0zezm6k8",
+          "id": "rose_1781156678763_lua66j9ea",
           "typeId": "rose",
           "name": "Thorn",
           "xp": 240,
           "happiness": 92,
-          "lastCheckin": 1781053506371,
-          "createdAt": 1781053506371
+          "lastCheckin": 1781156678763,
+          "createdAt": 1781156678763
         },
         {
-          "id": "golden_1781053506371_7jc4in58g",
+          "id": "golden_1781156678763_o75vyco7h",
           "typeId": "golden",
           "name": "Sunny",
           "xp": 110,
           "happiness": 92,
-          "lastCheckin": 1781053506371,
-          "createdAt": 1781053506371
+          "lastCheckin": 1781156678763,
+          "createdAt": 1781156678763
         },
         {
-          "id": "mint_1781053506371_z16kditzv",
+          "id": "mint_1781156678763_u0si00s92",
           "typeId": "mint",
           "name": "Sprout",
           "xp": 50,
           "happiness": 92,
-          "lastCheckin": 1781053506371,
-          "createdAt": 1781053506371
+          "lastCheckin": 1781156678763,
+          "createdAt": 1781156678763
         }
       ],
       "teamIds": [
-        "phoenix_1781053506371_5nml1748y",
-        "lunar_1781053506371_5aff9983p"
+        "phoenix_1781156678763_yt7sv567e",
+        "lunar_1781156678763_brwm8ok4g"
       ],
       "tasks": [
         {
@@ -271,7 +274,7 @@
       ],
       "log": [
         {
-          "timestamp": 1781049906372,
+          "timestamp": 1781153078764,
           "taskId": "t_ex",
           "label": "Exercise",
           "icon": "🏃",
@@ -280,7 +283,7 @@
           "note": "🎯 Goal reached!"
         },
         {
-          "timestamp": 1781046306372,
+          "timestamp": 1781149478764,
           "taskId": "t_jobs",
           "label": "Job Applications",
           "icon": "📋",
@@ -289,7 +292,7 @@
           "note": null
         },
         {
-          "timestamp": 1781044506372,
+          "timestamp": 1781147678764,
           "taskId": "t_lc",
           "label": "LeetCode Problems",
           "icon": "💻",
@@ -299,10 +302,11 @@
         }
       ],
       "streak": 7,
-      "lastStreakDate": "Tue Jun 09 2026",
+      "lastStreakDate": "Thu Jun 11 2026",
       "run": null,
       "trophies": [],
-      "lastReset": "Tue Jun 09 2026"
+      "bestTier": 0,
+      "lastReset": "Thu Jun 11 2026"
     },
     "nav": "Peeps",
     "click": [
@@ -313,73 +317,74 @@
   {
     "name": "3-gacha-shop",
     "save": {
+      "version": 2,
       "onboarded": true,
       "profile": {
         "name": "Mahi",
         "peepName": "Blaze"
       },
       "coins": 320,
-      "activePeepId": "phoenix_1781053506371_5nml1748y",
+      "activePeepId": "phoenix_1781156678763_yt7sv567e",
       "peeps": [
         {
-          "id": "phoenix_1781053506371_5nml1748y",
+          "id": "phoenix_1781156678763_yt7sv567e",
           "typeId": "phoenix",
           "name": "Blaze",
           "xp": 1850,
           "happiness": 92,
-          "lastCheckin": 1781053506371,
-          "createdAt": 1781053506371
+          "lastCheckin": 1781156678763,
+          "createdAt": 1781156678763
         },
         {
-          "id": "lunar_1781053506371_5aff9983p",
+          "id": "lunar_1781156678763_brwm8ok4g",
           "typeId": "lunar",
           "name": "Selene",
           "xp": 980,
           "happiness": 92,
-          "lastCheckin": 1781053506371,
-          "createdAt": 1781053506371
+          "lastCheckin": 1781156678763,
+          "createdAt": 1781156678763
         },
         {
-          "id": "cosmic_1781053506371_uzaitgny9",
+          "id": "cosmic_1781156678763_j9619a71c",
           "typeId": "cosmic",
           "name": "Cosmo",
           "xp": 540,
           "happiness": 92,
-          "lastCheckin": 1781053506371,
-          "createdAt": 1781053506371
+          "lastCheckin": 1781156678763,
+          "createdAt": 1781156678763
         },
         {
-          "id": "rose_1781053506371_l0zezm6k8",
+          "id": "rose_1781156678763_lua66j9ea",
           "typeId": "rose",
           "name": "Thorn",
           "xp": 240,
           "happiness": 92,
-          "lastCheckin": 1781053506371,
-          "createdAt": 1781053506371
+          "lastCheckin": 1781156678763,
+          "createdAt": 1781156678763
         },
         {
-          "id": "golden_1781053506371_7jc4in58g",
+          "id": "golden_1781156678763_o75vyco7h",
           "typeId": "golden",
           "name": "Sunny",
           "xp": 110,
           "happiness": 92,
-          "lastCheckin": 1781053506371,
-          "createdAt": 1781053506371
+          "lastCheckin": 1781156678763,
+          "createdAt": 1781156678763
         },
         {
-          "id": "mint_1781053506371_z16kditzv",
+          "id": "mint_1781156678763_u0si00s92",
           "typeId": "mint",
           "name": "Sprout",
           "xp": 50,
           "happiness": 92,
-          "lastCheckin": 1781053506371,
-          "createdAt": 1781053506371
+          "lastCheckin": 1781156678763,
+          "createdAt": 1781156678763
         }
       ],
       "teamIds": [
-        "phoenix_1781053506371_5nml1748y",
-        "lunar_1781053506371_5aff9983p",
-        "cosmic_1781053506371_uzaitgny9"
+        "phoenix_1781156678763_yt7sv567e",
+        "lunar_1781156678763_brwm8ok4g",
+        "cosmic_1781156678763_j9619a71c"
       ],
       "tasks": [
         {
@@ -429,7 +434,7 @@
       ],
       "log": [
         {
-          "timestamp": 1781049906372,
+          "timestamp": 1781153078764,
           "taskId": "t_ex",
           "label": "Exercise",
           "icon": "🏃",
@@ -438,7 +443,7 @@
           "note": "🎯 Goal reached!"
         },
         {
-          "timestamp": 1781046306372,
+          "timestamp": 1781149478764,
           "taskId": "t_jobs",
           "label": "Job Applications",
           "icon": "📋",
@@ -447,7 +452,7 @@
           "note": null
         },
         {
-          "timestamp": 1781044506372,
+          "timestamp": 1781147678764,
           "taskId": "t_lc",
           "label": "LeetCode Problems",
           "icon": "💻",
@@ -457,83 +462,85 @@
         }
       ],
       "streak": 7,
-      "lastStreakDate": "Tue Jun 09 2026",
+      "lastStreakDate": "Thu Jun 11 2026",
       "run": null,
       "trophies": [],
-      "lastReset": "Tue Jun 09 2026"
+      "bestTier": 0,
+      "lastReset": "Thu Jun 11 2026"
     },
     "nav": "Shop"
   },
   {
     "name": "4-run-start",
     "save": {
+      "version": 2,
       "onboarded": true,
       "profile": {
         "name": "Mahi",
         "peepName": "Blaze"
       },
       "coins": 320,
-      "activePeepId": "phoenix_1781053506371_5nml1748y",
+      "activePeepId": "phoenix_1781156678763_yt7sv567e",
       "peeps": [
         {
-          "id": "phoenix_1781053506371_5nml1748y",
+          "id": "phoenix_1781156678763_yt7sv567e",
           "typeId": "phoenix",
           "name": "Blaze",
           "xp": 1850,
           "happiness": 92,
-          "lastCheckin": 1781053506371,
-          "createdAt": 1781053506371
+          "lastCheckin": 1781156678763,
+          "createdAt": 1781156678763
         },
         {
-          "id": "lunar_1781053506371_5aff9983p",
+          "id": "lunar_1781156678763_brwm8ok4g",
           "typeId": "lunar",
           "name": "Selene",
           "xp": 980,
           "happiness": 92,
-          "lastCheckin": 1781053506371,
-          "createdAt": 1781053506371
+          "lastCheckin": 1781156678763,
+          "createdAt": 1781156678763
         },
         {
-          "id": "cosmic_1781053506371_uzaitgny9",
+          "id": "cosmic_1781156678763_j9619a71c",
           "typeId": "cosmic",
           "name": "Cosmo",
           "xp": 540,
           "happiness": 92,
-          "lastCheckin": 1781053506371,
-          "createdAt": 1781053506371
+          "lastCheckin": 1781156678763,
+          "createdAt": 1781156678763
         },
         {
-          "id": "rose_1781053506371_l0zezm6k8",
+          "id": "rose_1781156678763_lua66j9ea",
           "typeId": "rose",
           "name": "Thorn",
           "xp": 240,
           "happiness": 92,
-          "lastCheckin": 1781053506371,
-          "createdAt": 1781053506371
+          "lastCheckin": 1781156678763,
+          "createdAt": 1781156678763
         },
         {
-          "id": "golden_1781053506371_7jc4in58g",
+          "id": "golden_1781156678763_o75vyco7h",
           "typeId": "golden",
           "name": "Sunny",
           "xp": 110,
           "happiness": 92,
-          "lastCheckin": 1781053506371,
-          "createdAt": 1781053506371
+          "lastCheckin": 1781156678763,
+          "createdAt": 1781156678763
         },
         {
-          "id": "mint_1781053506371_z16kditzv",
+          "id": "mint_1781156678763_u0si00s92",
           "typeId": "mint",
           "name": "Sprout",
           "xp": 50,
           "happiness": 92,
-          "lastCheckin": 1781053506371,
-          "createdAt": 1781053506371
+          "lastCheckin": 1781156678763,
+          "createdAt": 1781156678763
         }
       ],
       "teamIds": [
-        "phoenix_1781053506371_5nml1748y",
-        "lunar_1781053506371_5aff9983p",
-        "cosmic_1781053506371_uzaitgny9"
+        "phoenix_1781156678763_yt7sv567e",
+        "lunar_1781156678763_brwm8ok4g",
+        "cosmic_1781156678763_j9619a71c"
       ],
       "tasks": [
         {
@@ -583,7 +590,7 @@
       ],
       "log": [
         {
-          "timestamp": 1781049906372,
+          "timestamp": 1781153078764,
           "taskId": "t_ex",
           "label": "Exercise",
           "icon": "🏃",
@@ -592,7 +599,7 @@
           "note": "🎯 Goal reached!"
         },
         {
-          "timestamp": 1781046306372,
+          "timestamp": 1781149478764,
           "taskId": "t_jobs",
           "label": "Job Applications",
           "icon": "📋",
@@ -601,7 +608,7 @@
           "note": null
         },
         {
-          "timestamp": 1781044506372,
+          "timestamp": 1781147678764,
           "taskId": "t_lc",
           "label": "LeetCode Problems",
           "icon": "💻",
@@ -611,83 +618,85 @@
         }
       ],
       "streak": 7,
-      "lastStreakDate": "Tue Jun 09 2026",
+      "lastStreakDate": "Thu Jun 11 2026",
       "run": null,
       "trophies": [],
-      "lastReset": "Tue Jun 09 2026"
+      "bestTier": 0,
+      "lastReset": "Thu Jun 11 2026"
     },
     "nav": "Battle"
   },
   {
     "name": "5-dungeon-map",
     "save": {
+      "version": 2,
       "onboarded": true,
       "profile": {
         "name": "Mahi",
         "peepName": "Blaze"
       },
       "coins": 320,
-      "activePeepId": "phoenix_1781053506371_5nml1748y",
+      "activePeepId": "phoenix_1781156678763_yt7sv567e",
       "peeps": [
         {
-          "id": "phoenix_1781053506371_5nml1748y",
+          "id": "phoenix_1781156678763_yt7sv567e",
           "typeId": "phoenix",
           "name": "Blaze",
           "xp": 1850,
           "happiness": 92,
-          "lastCheckin": 1781053506371,
-          "createdAt": 1781053506371
+          "lastCheckin": 1781156678763,
+          "createdAt": 1781156678763
         },
         {
-          "id": "lunar_1781053506371_5aff9983p",
+          "id": "lunar_1781156678763_brwm8ok4g",
           "typeId": "lunar",
           "name": "Selene",
           "xp": 980,
           "happiness": 92,
-          "lastCheckin": 1781053506371,
-          "createdAt": 1781053506371
+          "lastCheckin": 1781156678763,
+          "createdAt": 1781156678763
         },
         {
-          "id": "cosmic_1781053506371_uzaitgny9",
+          "id": "cosmic_1781156678763_j9619a71c",
           "typeId": "cosmic",
           "name": "Cosmo",
           "xp": 540,
           "happiness": 92,
-          "lastCheckin": 1781053506371,
-          "createdAt": 1781053506371
+          "lastCheckin": 1781156678763,
+          "createdAt": 1781156678763
         },
         {
-          "id": "rose_1781053506371_l0zezm6k8",
+          "id": "rose_1781156678763_lua66j9ea",
           "typeId": "rose",
           "name": "Thorn",
           "xp": 240,
           "happiness": 92,
-          "lastCheckin": 1781053506371,
-          "createdAt": 1781053506371
+          "lastCheckin": 1781156678763,
+          "createdAt": 1781156678763
         },
         {
-          "id": "golden_1781053506371_7jc4in58g",
+          "id": "golden_1781156678763_o75vyco7h",
           "typeId": "golden",
           "name": "Sunny",
           "xp": 110,
           "happiness": 92,
-          "lastCheckin": 1781053506371,
-          "createdAt": 1781053506371
+          "lastCheckin": 1781156678763,
+          "createdAt": 1781156678763
         },
         {
-          "id": "mint_1781053506371_z16kditzv",
+          "id": "mint_1781156678763_u0si00s92",
           "typeId": "mint",
           "name": "Sprout",
           "xp": 50,
           "happiness": 92,
-          "lastCheckin": 1781053506371,
-          "createdAt": 1781053506371
+          "lastCheckin": 1781156678763,
+          "createdAt": 1781156678763
         }
       ],
       "teamIds": [
-        "phoenix_1781053506371_5nml1748y",
-        "lunar_1781053506371_5aff9983p",
-        "cosmic_1781053506371_uzaitgny9"
+        "phoenix_1781156678763_yt7sv567e",
+        "lunar_1781156678763_brwm8ok4g",
+        "cosmic_1781156678763_j9619a71c"
       ],
       "tasks": [
         {
@@ -737,7 +746,7 @@
       ],
       "log": [
         {
-          "timestamp": 1781049906372,
+          "timestamp": 1781153078764,
           "taskId": "t_ex",
           "label": "Exercise",
           "icon": "🏃",
@@ -746,7 +755,7 @@
           "note": "🎯 Goal reached!"
         },
         {
-          "timestamp": 1781046306372,
+          "timestamp": 1781149478764,
           "taskId": "t_jobs",
           "label": "Job Applications",
           "icon": "📋",
@@ -755,7 +764,7 @@
           "note": null
         },
         {
-          "timestamp": 1781044506372,
+          "timestamp": 1781147678764,
           "taskId": "t_lc",
           "label": "LeetCode Problems",
           "icon": "💻",
@@ -765,7 +774,7 @@
         }
       ],
       "streak": 7,
-      "lastStreakDate": "Tue Jun 09 2026",
+      "lastStreakDate": "Thu Jun 11 2026",
       "run": {
         "map": {
           "layers": 7,
@@ -790,15 +799,14 @@
               "x": 0.15,
               "y": 0.16666666666666666,
               "next": [
-                "n_2_0",
-                "n_2_1"
+                "n_2_0"
               ]
             },
             {
               "id": "n_1_1",
               "layer": 1,
               "col": 1,
-              "type": "battle",
+              "type": "treasure",
               "x": 0.85,
               "y": 0.16666666666666666,
               "next": [
@@ -814,19 +822,19 @@
               "x": 0.15,
               "y": 0.3333333333333333,
               "next": [
-                "n_3_0"
+                "n_3_0",
+                "n_3_1"
               ]
             },
             {
               "id": "n_2_1",
               "layer": 2,
               "col": 1,
-              "type": "rest",
+              "type": "elite",
               "x": 0.85,
               "y": 0.3333333333333333,
               "next": [
-                "n_3_2",
-                "n_3_1"
+                "n_3_2"
               ]
             },
             {
@@ -844,30 +852,30 @@
               "id": "n_3_1",
               "layer": 3,
               "col": 1,
-              "type": "rest",
+              "type": "elite",
               "x": 0.5,
               "y": 0.5,
               "next": [
-                "n_4_0",
-                "n_4_1"
+                "n_4_0"
               ]
             },
             {
               "id": "n_3_2",
               "layer": 3,
               "col": 2,
-              "type": "treasure",
+              "type": "battle",
               "x": 0.85,
               "y": 0.5,
               "next": [
-                "n_4_1"
+                "n_4_1",
+                "n_4_0"
               ]
             },
             {
               "id": "n_4_0",
               "layer": 4,
               "col": 0,
-              "type": "battle",
+              "type": "elite",
               "x": 0.15,
               "y": 0.6666666666666666,
               "next": [
@@ -937,8 +945,8 @@
         ],
         "team": [
           {
-            "uid": "c1_83903",
-            "peepId": "phoenix_1781053506371_5nml1748y",
+            "uid": "c1_402358",
+            "peepId": "phoenix_1781156678763_yt7sv567e",
             "side": "ally",
             "name": "Blaze",
             "emoji": "☄️",
@@ -989,8 +997,8 @@
             ]
           },
           {
-            "uid": "c2_954388",
-            "peepId": "lunar_1781053506371_5aff9983p",
+            "uid": "c2_928432",
+            "peepId": "lunar_1781156678763_brwm8ok4g",
             "side": "ally",
             "name": "Selene",
             "emoji": "🦉",
@@ -1035,8 +1043,8 @@
             ]
           },
           {
-            "uid": "c3_916076",
-            "peepId": "cosmic_1781053506371_uzaitgny9",
+            "uid": "c3_847639",
+            "peepId": "cosmic_1781156678763_j9619a71c",
             "side": "ally",
             "name": "Cosmo",
             "emoji": "🌟",
@@ -1060,15 +1068,15 @@
                 "emoji": "🐦"
               },
               {
-                "id": "spark",
-                "name": "Spark",
+                "id": "bolt",
+                "name": "Thunderbolt",
                 "element": "electric",
                 "kind": "attack",
-                "power": 45,
+                "power": 55,
                 "emoji": "⚡",
                 "inflict": {
                   "status": "paralyze",
-                  "chance": 0.25
+                  "chance": 0.2
                 }
               },
               {
@@ -1091,80 +1099,82 @@
         "status": "active"
       },
       "trophies": [],
-      "lastReset": "Tue Jun 09 2026"
+      "bestTier": 0,
+      "lastReset": "Thu Jun 11 2026"
     },
     "nav": "Battle"
   },
   {
     "name": "6-combat",
     "save": {
+      "version": 2,
       "onboarded": true,
       "profile": {
         "name": "Mahi",
         "peepName": "Blaze"
       },
       "coins": 320,
-      "activePeepId": "phoenix_1781053506371_5nml1748y",
+      "activePeepId": "phoenix_1781156678763_yt7sv567e",
       "peeps": [
         {
-          "id": "phoenix_1781053506371_5nml1748y",
+          "id": "phoenix_1781156678763_yt7sv567e",
           "typeId": "phoenix",
           "name": "Blaze",
           "xp": 1850,
           "happiness": 92,
-          "lastCheckin": 1781053506371,
-          "createdAt": 1781053506371
+          "lastCheckin": 1781156678763,
+          "createdAt": 1781156678763
         },
         {
-          "id": "lunar_1781053506371_5aff9983p",
+          "id": "lunar_1781156678763_brwm8ok4g",
           "typeId": "lunar",
           "name": "Selene",
           "xp": 980,
           "happiness": 92,
-          "lastCheckin": 1781053506371,
-          "createdAt": 1781053506371
+          "lastCheckin": 1781156678763,
+          "createdAt": 1781156678763
         },
         {
-          "id": "cosmic_1781053506371_uzaitgny9",
+          "id": "cosmic_1781156678763_j9619a71c",
           "typeId": "cosmic",
           "name": "Cosmo",
           "xp": 540,
           "happiness": 92,
-          "lastCheckin": 1781053506371,
-          "createdAt": 1781053506371
+          "lastCheckin": 1781156678763,
+          "createdAt": 1781156678763
         },
         {
-          "id": "rose_1781053506371_l0zezm6k8",
+          "id": "rose_1781156678763_lua66j9ea",
           "typeId": "rose",
           "name": "Thorn",
           "xp": 240,
           "happiness": 92,
-          "lastCheckin": 1781053506371,
-          "createdAt": 1781053506371
+          "lastCheckin": 1781156678763,
+          "createdAt": 1781156678763
         },
         {
-          "id": "golden_1781053506371_7jc4in58g",
+          "id": "golden_1781156678763_o75vyco7h",
           "typeId": "golden",
           "name": "Sunny",
           "xp": 110,
           "happiness": 92,
-          "lastCheckin": 1781053506371,
-          "createdAt": 1781053506371
+          "lastCheckin": 1781156678763,
+          "createdAt": 1781156678763
         },
         {
-          "id": "mint_1781053506371_z16kditzv",
+          "id": "mint_1781156678763_u0si00s92",
           "typeId": "mint",
           "name": "Sprout",
           "xp": 50,
           "happiness": 92,
-          "lastCheckin": 1781053506371,
-          "createdAt": 1781053506371
+          "lastCheckin": 1781156678763,
+          "createdAt": 1781156678763
         }
       ],
       "teamIds": [
-        "phoenix_1781053506371_5nml1748y",
-        "lunar_1781053506371_5aff9983p",
-        "cosmic_1781053506371_uzaitgny9"
+        "phoenix_1781156678763_yt7sv567e",
+        "lunar_1781156678763_brwm8ok4g",
+        "cosmic_1781156678763_j9619a71c"
       ],
       "tasks": [
         {
@@ -1214,7 +1224,7 @@
       ],
       "log": [
         {
-          "timestamp": 1781049906372,
+          "timestamp": 1781153078764,
           "taskId": "t_ex",
           "label": "Exercise",
           "icon": "🏃",
@@ -1223,7 +1233,7 @@
           "note": "🎯 Goal reached!"
         },
         {
-          "timestamp": 1781046306372,
+          "timestamp": 1781149478764,
           "taskId": "t_jobs",
           "label": "Job Applications",
           "icon": "📋",
@@ -1232,7 +1242,7 @@
           "note": null
         },
         {
-          "timestamp": 1781044506372,
+          "timestamp": 1781147678764,
           "taskId": "t_lc",
           "label": "LeetCode Problems",
           "icon": "💻",
@@ -1242,7 +1252,7 @@
         }
       ],
       "streak": 7,
-      "lastStreakDate": "Tue Jun 09 2026",
+      "lastStreakDate": "Thu Jun 11 2026",
       "run": {
         "map": {
           "layers": 7,
@@ -1264,7 +1274,7 @@
               "id": "n_1_0",
               "layer": 1,
               "col": 0,
-              "type": "treasure",
+              "type": "rest",
               "x": 0.15,
               "y": 0.16666666666666666,
               "next": [
@@ -1275,7 +1285,7 @@
               "id": "n_1_1",
               "layer": 1,
               "col": 1,
-              "type": "treasure",
+              "type": "rest",
               "x": 0.5,
               "y": 0.16666666666666666,
               "next": [
@@ -1286,34 +1296,33 @@
               "id": "n_1_2",
               "layer": 1,
               "col": 2,
-              "type": "battle",
+              "type": "elite",
               "x": 0.85,
               "y": 0.16666666666666666,
               "next": [
-                "n_2_2"
+                "n_2_2",
+                "n_2_1"
               ]
             },
             {
               "id": "n_2_0",
               "layer": 2,
               "col": 0,
-              "type": "elite",
+              "type": "rest",
               "x": 0.15,
               "y": 0.3333333333333333,
               "next": [
-                "n_3_0",
-                "n_3_1"
+                "n_3_0"
               ]
             },
             {
               "id": "n_2_1",
               "layer": 2,
               "col": 1,
-              "type": "elite",
+              "type": "battle",
               "x": 0.5,
               "y": 0.3333333333333333,
               "next": [
-                "n_3_0",
                 "n_3_1"
               ]
             },
@@ -1321,10 +1330,11 @@
               "id": "n_2_2",
               "layer": 2,
               "col": 2,
-              "type": "treasure",
+              "type": "rest",
               "x": 0.85,
               "y": 0.3333333333333333,
               "next": [
+                "n_3_2",
                 "n_3_1"
               ]
             },
@@ -1336,18 +1346,30 @@
               "x": 0.15,
               "y": 0.5,
               "next": [
-                "n_4_0"
+                "n_4_0",
+                "n_4_1"
               ]
             },
             {
               "id": "n_3_1",
               "layer": 3,
               "col": 1,
-              "type": "rest",
+              "type": "battle",
+              "x": 0.5,
+              "y": 0.5,
+              "next": [
+                "n_4_0",
+                "n_4_1"
+              ]
+            },
+            {
+              "id": "n_3_2",
+              "layer": 3,
+              "col": 2,
+              "type": "elite",
               "x": 0.85,
               "y": 0.5,
               "next": [
-                "n_4_2",
                 "n_4_1"
               ]
             },
@@ -1355,29 +1377,17 @@
               "id": "n_4_0",
               "layer": 4,
               "col": 0,
-              "type": "battle",
+              "type": "elite",
               "x": 0.15,
               "y": 0.6666666666666666,
               "next": [
-                "n_5_0",
-                "n_5_1"
+                "n_5_0"
               ]
             },
             {
               "id": "n_4_1",
               "layer": 4,
               "col": 1,
-              "type": "treasure",
-              "x": 0.5,
-              "y": 0.6666666666666666,
-              "next": [
-                "n_5_1"
-              ]
-            },
-            {
-              "id": "n_4_2",
-              "layer": 4,
-              "col": 2,
               "type": "battle",
               "x": 0.85,
               "y": 0.6666666666666666,
@@ -1430,14 +1440,14 @@
             }
           ]
         },
-        "position": "n_1_2",
+        "position": "n_2_1",
         "reached": [
           "n_0_0"
         ],
         "team": [
           {
-            "uid": "c4_137211",
-            "peepId": "phoenix_1781053506371_5nml1748y",
+            "uid": "c4_367294",
+            "peepId": "phoenix_1781156678763_yt7sv567e",
             "side": "ally",
             "name": "Blaze",
             "emoji": "☄️",
@@ -1488,8 +1498,8 @@
             ]
           },
           {
-            "uid": "c5_39331",
-            "peepId": "lunar_1781053506371_5aff9983p",
+            "uid": "c5_507222",
+            "peepId": "lunar_1781156678763_brwm8ok4g",
             "side": "ally",
             "name": "Selene",
             "emoji": "🦉",
@@ -1534,8 +1544,8 @@
             ]
           },
           {
-            "uid": "c6_598858",
-            "peepId": "cosmic_1781053506371_uzaitgny9",
+            "uid": "c6_73899",
+            "peepId": "cosmic_1781156678763_j9619a71c",
             "side": "ally",
             "name": "Cosmo",
             "emoji": "🌟",
@@ -1559,15 +1569,15 @@
                 "emoji": "🐦"
               },
               {
-                "id": "spark",
-                "name": "Spark",
+                "id": "bolt",
+                "name": "Thunderbolt",
                 "element": "electric",
                 "kind": "attack",
-                "power": 45,
+                "power": 55,
                 "emoji": "⚡",
                 "inflict": {
                   "status": "paralyze",
-                  "chance": 0.25
+                  "chance": 0.2
                 }
               },
               {
@@ -1597,15 +1607,15 @@
             ],
             "ally": [
               {
-                "uid": "c7_109133",
-                "peepId": "phoenix_1781053506371_5nml1748y",
+                "uid": "c7_487313",
+                "peepId": "phoenix_1781156678763_yt7sv567e",
                 "side": "ally",
                 "name": "Blaze",
                 "emoji": "☄️",
                 "element": "fire",
                 "level": 16,
                 "maxHp": 213,
-                "hp": 185,
+                "hp": 213,
                 "atk": 75,
                 "def": 58,
                 "spd": 58,
@@ -1649,8 +1659,8 @@
                 ]
               },
               {
-                "uid": "c8_689122",
-                "peepId": "lunar_1781053506371_5aff9983p",
+                "uid": "c8_670326",
+                "peepId": "lunar_1781156678763_brwm8ok4g",
                 "side": "ally",
                 "name": "Selene",
                 "emoji": "🦉",
@@ -1695,8 +1705,8 @@
                 ]
               },
               {
-                "uid": "c9_500893",
-                "peepId": "cosmic_1781053506371_uzaitgny9",
+                "uid": "c9_806300",
+                "peepId": "cosmic_1781156678763_j9619a71c",
                 "side": "ally",
                 "name": "Cosmo",
                 "emoji": "🌟",
@@ -1720,15 +1730,15 @@
                     "emoji": "🐦"
                   },
                   {
-                    "id": "spark",
-                    "name": "Spark",
+                    "id": "bolt",
+                    "name": "Thunderbolt",
                     "element": "electric",
                     "kind": "attack",
-                    "power": 45,
+                    "power": 55,
                     "emoji": "⚡",
                     "inflict": {
                       "status": "paralyze",
-                      "chance": 0.25
+                      "chance": 0.2
                     }
                   },
                   {
@@ -1745,89 +1755,68 @@
             ],
             "enemy": [
               {
-                "uid": "c10_147984",
+                "uid": "c10_294304",
                 "peepId": null,
                 "side": "enemy",
-                "name": "Drip Slime",
-                "emoji": "🫧",
-                "element": "water",
-                "level": 10,
-                "maxHp": 106,
-                "hp": 48,
-                "atk": 34,
-                "def": 28,
-                "spd": 25,
-                "atkMult": 1,
-                "defMult": 1,
-                "status": null,
-                "moves": [
-                  {
-                    "id": "splash",
-                    "name": "Aqua Jet",
-                    "element": "water",
-                    "kind": "attack",
-                    "power": 45,
-                    "emoji": "💧"
-                  },
-                  {
-                    "id": "tackle",
-                    "name": "Tackle",
-                    "element": "normal",
-                    "kind": "attack",
-                    "power": 35,
-                    "emoji": "💥"
-                  }
-                ]
-              },
-              {
-                "uid": "c11_916524",
-                "peepId": null,
-                "side": "enemy",
-                "name": "Husk Goon",
-                "emoji": "👹",
-                "element": "normal",
-                "level": 10,
-                "maxHp": 131,
-                "hp": 131,
-                "atk": 39,
-                "def": 33,
+                "name": "Cinder Imp",
+                "emoji": "😈",
+                "element": "fire",
+                "level": 5,
+                "maxHp": 83,
+                "hp": 0,
+                "atk": 27,
+                "def": 19,
                 "spd": 22,
                 "atkMult": 1,
                 "defMult": 1,
                 "status": null,
                 "moves": [
                   {
-                    "id": "tackle",
-                    "name": "Tackle",
-                    "element": "normal",
-                    "kind": "attack",
-                    "power": 35,
-                    "emoji": "💥"
+                    "id": "willowisp",
+                    "name": "Will-o-Wisp",
+                    "element": "fire",
+                    "kind": "status",
+                    "inflict": {
+                      "status": "burn",
+                      "chance": 1
+                    },
+                    "emoji": "🔥"
                   },
                   {
-                    "id": "focus",
-                    "name": "Focus",
+                    "id": "ember",
+                    "name": "Ember",
+                    "element": "fire",
+                    "kind": "attack",
+                    "power": 45,
+                    "emoji": "🔥",
+                    "inflict": {
+                      "status": "burn",
+                      "chance": 0.25
+                    }
+                  },
+                  {
+                    "id": "crunch",
+                    "name": "Crunch",
                     "element": "normal",
-                    "kind": "buff",
-                    "stat": "atk",
-                    "amount": 0.35,
-                    "emoji": "💪"
+                    "kind": "attack",
+                    "power": 52,
+                    "emoji": "🦷"
                   }
                 ]
               },
               {
-                "uid": "c12_587628",
+                "uid": "c11_858274",
                 "peepId": null,
                 "side": "enemy",
                 "name": "Ember Pup",
                 "emoji": "🐕",
                 "element": "fire",
-                "level": 10,
-                "maxHp": 111,
-                "hp": 111,
-                "atk": 36,
-                "def": 29,
-                "spd": 28,
+                "level": 5,
+                "maxHp": 80,
+                "hp": 80,
+                "atk": 22,
+                "def": 19,
+                "spd": 20,
                 "atkMult": 1,
                 "defMult": 1,
                 "status": null,
@@ -1853,10 +1842,49 @@
                     "emoji": "💥"
                   }
                 ]
+              },
+              {
+                "uid": "c12_872222",
+                "peepId": null,
+                "side": "enemy",
+                "name": "Frost Wraith",
+                "emoji": "👻",
+                "element": "water",
+                "level": 5,
+                "maxHp": 78,
+                "hp": 78,
+                "atk": 24,
+                "def": 18,
+                "spd": 26,
+                "atkMult": 1,
+                "defMult": 1,
+                "status": null,
+                "moves": [
+                  {
+                    "id": "icebeam",
+                    "name": "Ice Beam",
+                    "element": "water",
+                    "kind": "attack",
+                    "power": 48,
+                    "emoji": "❄️",
+                    "inflict": {
+                      "status": "frostbite",
+                      "chance": 0.3
+                    }
+                  },
+                  {
+                    "id": "tackle",
+                    "name": "Tackle",
+                    "element": "normal",
+                    "kind": "attack",
+                    "power": 35,
+                    "emoji": "💥"
+                  }
+                ]
               }
             ],
             "allyActive": 0,
-            "enemyActive": 0,
+            "enemyActive": 1,
             "log": [
               {
                 "t": "info",
@@ -1864,23 +1892,28 @@
               },
               {
                 "t": "ally",
-                "text": "☄️ Blaze used Ember — 58 dmg. It's not very effective…"
+                "text": "☄️ Blaze used Ember — 124 dmg."
               },
               {
-                "t": "enemy",
-                "text": "🫧 Drip Slime used Aqua Jet — 28 dmg. It's super effective!"
+                "t": "info",
+                "text": "😈 Cinder Imp fainted!"
+              },
+              {
+                "t": "info",
+                "text": "🐕 Ember Pup steps in!"
               }
             ],
             "awaitingInput": true,
             "over": false,
             "result": null
           },
-          "nodeId": "n_1_2"
+          "nodeId": "n_2_1"
         },
         "status": "active"
       },
       "trophies": [],
-      "lastReset": "Tue Jun 09 2026"
+      "bestTier": 0,
+      "lastReset": "Thu Jun 11 2026"
     },
     "nav": null
   }

@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, Tray, Menu, screen } = require('electron')
+const { app, BrowserWindow, ipcMain, Tray, Menu, screen, Notification } = require('electron')
 const path = require('path')
 const fs = require('fs')
 
@@ -10,18 +10,33 @@ let mainWindow
 let miniWindow
 let tray
 
+const BACKUP_PATH = DATA_PATH + '.bak'
+
 function loadData() {
-  try {
-    if (fs.existsSync(DATA_PATH)) {
-      return JSON.parse(fs.readFileSync(DATA_PATH, 'utf8'))
+  // Try the main file, then fall back to the backup if it's missing/corrupt so a
+  // half-written or damaged save can't permanently brick the app.
+  for (const p of [DATA_PATH, BACKUP_PATH]) {
+    try {
+      if (fs.existsSync(p)) return JSON.parse(fs.readFileSync(p, 'utf8'))
+    } catch (e) {
+      // corrupt file — try the next candidate
     }
-  } catch (e) {}
+  }
   return null
 }
 
 function saveData(data) {
+  // Write to a temp file, snapshot the last good save to .bak, then atomically
+  // rename into place. A crash mid-write leaves either the old file or the .bak
+  // intact — never a truncated DATA_PATH.
   try {
-    fs.writeFileSync(DATA_PATH, JSON.stringify(data, null, 2))
+    const json = JSON.stringify(data, null, 2)
+    const tmpPath = DATA_PATH + '.tmp'
+    fs.writeFileSync(tmpPath, json)
+    if (fs.existsSync(DATA_PATH)) {
+      try { fs.copyFileSync(DATA_PATH, BACKUP_PATH) } catch (e) {}
+    }
+    fs.renameSync(tmpPath, DATA_PATH)
     return true
   } catch (e) {
     return false
@@ -154,6 +169,12 @@ function createTray() {
     const contextMenu = Menu.buildFromTemplate([
       { label: 'Show Peep', click: () => { mainWindow?.show(); mainWindow?.focus() } },
       { label: 'Mini View', click: createMiniWindow },
+      { label: 'Test Reminder', click: () => {
+        if (!Notification.isSupported()) return
+        const n = new Notification({ title: '🐣 Peep Companion', body: "Reminders are on — you'll be nudged at 7 PM if tasks remain." })
+        n.on('click', () => { mainWindow?.show(); mainWindow?.focus() })
+        n.show()
+      } },
       { type: 'separator' },
       { label: 'Exit', click: () => { app.quit() } }
     ])
@@ -167,9 +188,52 @@ function createTray() {
   }
 }
 
+// ── Daily habit reminder ──────────────────────────────────────────────────────
+// Fires a native notification at REMINDER_HOUR if the day's tasks aren't done, so
+// the companion pulls you back before the streak breaks. The app stays alive in
+// the tray, so the timer keeps running. Reminder hour can be overridden via
+// save.settings.reminderHour.
+const DEFAULT_REMINDER_HOUR = 19  // 7 PM local
+let reminderTimer = null
+
+function pendingTaskCount(data) {
+  if (!data || !data.onboarded || !Array.isArray(data.tasks)) return 0
+  return data.tasks.filter(t => (t.completedToday || 0) < t.goal).length
+}
+
+function showReminder() {
+  if (!Notification.isSupported()) return
+  const data = loadData()
+  const remaining = pendingTaskCount(data)
+  if (remaining <= 0) return   // all done (or no tasks) — don't nag
+  const peepName = data?.profile?.peepName || 'Your Peep'
+  const n = new Notification({
+    title: `🐣 ${peepName} misses you!`,
+    body: `You have ${remaining} task${remaining === 1 ? '' : 's'} left today. Keep your streak alive!`,
+  })
+  n.on('click', () => { mainWindow?.show(); mainWindow?.focus() })
+  n.show()
+}
+
+function scheduleDailyReminder() {
+  if (reminderTimer) clearTimeout(reminderTimer)
+  const data = loadData()
+  const hour = Number.isInteger(data?.settings?.reminderHour) ? data.settings.reminderHour : DEFAULT_REMINDER_HOUR
+  const now = new Date()
+  const next = new Date()
+  next.setHours(hour, 0, 0, 0)
+  if (next <= now) next.setDate(next.getDate() + 1)   // already past today → tomorrow
+  reminderTimer = setTimeout(() => {
+    showReminder()
+    scheduleDailyReminder()   // re-arm for the next day
+  }, next - now)
+}
+
 app.whenReady().then(() => {
+  app.setAppUserModelId('com.peep.companion')   // required for Windows notifications
   createWindow()
   createTray()
+  scheduleDailyReminder()
 })
 
 app.on('window-all-closed', () => { 

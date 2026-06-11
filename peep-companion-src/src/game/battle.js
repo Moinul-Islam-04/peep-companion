@@ -36,9 +36,11 @@ export const ELEMENTS = {
 // afflicted Peep can't act. Statuses last `turns` turns, then fade. They are
 // battle-only (cleared when the fight ends — never carried into the run HP).
 export const STATUSES = {
-  burn:     { id: 'burn',     name: 'Burn',     emoji: '🔥', dot: 0.07, turns: 3 },
-  poison:   { id: 'poison',   name: 'Poison',   emoji: '☠️', dot: 0.10, turns: 3 },
-  paralyze: { id: 'paralyze', name: 'Paralyze', emoji: '⚡', skipChance: 0.30, turns: 3 },
+  burn:      { id: 'burn',      name: 'Burn',      emoji: '🔥', dot: 0.07, turns: 3 },
+  poison:    { id: 'poison',    name: 'Poison',    emoji: '☠️', dot: 0.10, turns: 3 },
+  paralyze:  { id: 'paralyze',  name: 'Paralyze',  emoji: '⚡', skipChance: 0.30, turns: 3 },
+  // chip damage AND an occasional frozen turn — a control + DoT hybrid
+  frostbite: { id: 'frostbite', name: 'Frostbite', emoji: '❄️', dot: 0.06, skipChance: 0.18, turns: 3 },
 }
 export function getStatus(id) { return STATUSES[id] }
 
@@ -68,11 +70,16 @@ export const MOVES = {
   gust:    { id: 'gust',    name: 'Gust',     element: 'electric', kind: 'attack', power: 50, emoji: '🌪️' },
   inferno: { id: 'inferno', name: 'Inferno',  element: 'fire',     kind: 'attack', power: 60, emoji: '☄️', inflict: { status: 'burn', chance: 0.35 } },
   sludge:  { id: 'sludge',  name: 'Sludge',   element: 'grass',    kind: 'attack', power: 40, emoji: '🟣', inflict: { status: 'poison', chance: 0.4 } },
+  icebeam: { id: 'icebeam', name: 'Ice Beam', element: 'water',    kind: 'attack', power: 48, emoji: '❄️', inflict: { status: 'frostbite', chance: 0.3 } },
+  crunch:  { id: 'crunch',  name: 'Crunch',   element: 'normal',   kind: 'attack', power: 52, emoji: '🦷' },
+  leafblade: { id: 'leafblade', name: 'Leaf Blade', element: 'grass', kind: 'attack', power: 54, emoji: '🍃' },
+  bolt:    { id: 'bolt',    name: 'Thunderbolt', element: 'electric', kind: 'attack', power: 55, emoji: '⚡', inflict: { status: 'paralyze', chance: 0.2 } },
   focus:   { id: 'focus',   name: 'Focus',    element: 'normal',   kind: 'buff',   stat: 'atk', amount: 0.35, emoji: '💪' },
   guard:   { id: 'guard',   name: 'Guard',    element: 'normal',   kind: 'buff',   stat: 'def', amount: 0.4,  emoji: '🛡️' },
   preen:   { id: 'preen',   name: 'Preen',    element: 'normal',   kind: 'heal',   amount: 0.3, emoji: '✨' },
   toxic:   { id: 'toxic',   name: 'Toxic',    element: 'grass',    kind: 'status', inflict: { status: 'poison',   chance: 1 }, emoji: '☠️' },
   thunderwave: { id: 'thunderwave', name: 'Thunder Wave', element: 'electric', kind: 'status', inflict: { status: 'paralyze', chance: 1 }, emoji: '⚡' },
+  willowisp:   { id: 'willowisp',   name: 'Will-o-Wisp',  element: 'fire',     kind: 'status', inflict: { status: 'burn',     chance: 1 }, emoji: '🔥' },
 }
 
 // ── Species battle profiles ───────────────────────────────────────────────────
@@ -87,11 +94,11 @@ const PROFILES = {
              evolutions: [ { stage: 0, name: 'Mint Peep',    emoji: '🦗', minLevel: 1,  mult: 1.0  },
                            { stage: 1, name: 'Leaf Sprout',  emoji: '🌱', minLevel: 6,  mult: 1.15 },
                            { stage: 2, name: 'Forest Guard', emoji: '🌳', minLevel: 15, mult: 1.35 } ] },
-  sky:     { element: 'water',    base: { hp: 44, atk: 11, def: 9,  spd: 14 }, moves: ['peck', 'splash', 'preen'],
+  sky:     { element: 'water',    base: { hp: 44, atk: 11, def: 9,  spd: 14 }, moves: ['peck', 'icebeam', 'preen'],
              evolutions: [ { stage: 0, name: 'Sky Peep',     emoji: '🐦', minLevel: 1,  mult: 1.0  },
                            { stage: 1, name: 'Tide Diver',   emoji: '🦆', minLevel: 6,  mult: 1.15 },
                            { stage: 2, name: 'Storm Albatross', emoji: '🦢', minLevel: 15, mult: 1.35 } ] },
-  cosmic:  { element: 'electric', base: { hp: 50, atk: 14, def: 11, spd: 13 }, moves: ['peck', 'spark', 'focus'],
+  cosmic:  { element: 'electric', base: { hp: 50, atk: 14, def: 11, spd: 13 }, moves: ['peck', 'bolt', 'focus'],
              evolutions: [ { stage: 0, name: 'Cosmic Peep',  emoji: '🌟', minLevel: 1,  mult: 1.0  },
                            { stage: 1, name: 'Nebula Chick', emoji: '💫', minLevel: 6,  mult: 1.2  },
                            { stage: 2, name: 'Galaxy Sovereign', emoji: '🌌', minLevel: 15, mult: 1.45 } ] },
@@ -157,11 +164,21 @@ export const ENEMIES = {
   pup:     { id: 'pup',     name: 'Ember Pup',   emoji: '🐕', element: 'fire',     base: { hp: 44, atk: 11, def: 9,  spd: 10 }, moves: ['ember', 'tackle'] },
   goon:    { id: 'goon',    name: 'Husk Goon',   emoji: '👹', element: 'normal',   base: { hp: 60, atk: 13, def: 12, spd: 5  }, moves: ['tackle', 'focus'] },
   toad:    { id: 'toad',    name: 'Toxifrog',    emoji: '🐸', element: 'grass',    base: { hp: 52, atk: 10, def: 10, spd: 8  }, moves: ['sludge', 'toxic', 'tackle'] },
+  wraith:  { id: 'wraith',  name: 'Frost Wraith', emoji: '👻', element: 'water',   base: { hp: 42, atk: 13, def: 8,  spd: 15 }, moves: ['icebeam', 'tackle'] },
+  golem:   { id: 'golem',   name: 'Mossy Golem',  emoji: '🪨', element: 'grass',   base: { hp: 78, atk: 12, def: 18, spd: 4  }, moves: ['leafblade', 'guard'] },
+  imp:     { id: 'imp',     name: 'Cinder Imp',   emoji: '😈', element: 'fire',    base: { hp: 46, atk: 15, def: 9,  spd: 12 }, moves: ['willowisp', 'ember', 'crunch'] },
 }
-export const BOSS = {
-  id: 'hydra', name: 'Chaos Hydra', emoji: '🐉', element: 'fire',
-  base: { hp: 140, atk: 18, def: 14, spd: 11 }, moves: ['inferno', 'ember', 'guard'],
-}
+// A run draws one of these as its Final Boss (variety across runs/tiers).
+// rewardTypeId is the species of the permanent "Slayer" Peep it drops.
+export const BOSSES = [
+  { id: 'hydra',     name: 'Chaos Hydra',      emoji: '🐉', element: 'fire',     base: { hp: 140, atk: 18, def: 14, spd: 11 }, moves: ['inferno', 'willowisp', 'guard'], rewardTypeId: 'phoenix' },
+  { id: 'leviathan', name: 'Tide Leviathan',   emoji: '🐋', element: 'water',    base: { hp: 165, atk: 16, def: 16, spd: 9  }, moves: ['icebeam', 'crunch', 'guard'],     rewardTypeId: 'sky' },
+  { id: 'roc',       name: 'Thunder Roc',      emoji: '🦅', element: 'electric', base: { hp: 130, atk: 21, def: 12, spd: 16 }, moves: ['bolt', 'thunderwave', 'gust'],    rewardTypeId: 'lunar' },
+  { id: 'colossus',  name: 'Verdant Colossus', emoji: '🗿', element: 'grass',    base: { hp: 185, atk: 15, def: 20, spd: 6  }, moves: ['leafblade', 'toxic', 'guard'],    rewardTypeId: 'rose' },
+]
+export const BOSS = BOSSES[0]                                   // default / back-compat
+export function getBoss(id) { return BOSSES.find(b => b.id === id) || BOSS }
+export function randomBossId() { return BOSSES[Math.floor(Math.random() * BOSSES.length)].id }
 
 export function enemyRoster() { return Object.values(ENEMIES) }
 

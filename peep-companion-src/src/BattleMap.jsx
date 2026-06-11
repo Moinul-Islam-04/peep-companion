@@ -1,5 +1,6 @@
 import React from 'react'
 import { NODE_TYPES, availableNodes } from './game/mapGen.js'
+import { getBoss } from './game/battle.js'
 
 // Phase C overworld: a node-based, procedurally-generated map leading to the boss.
 // Renders the layered DAG, highlights reachable nodes, and shows team status.
@@ -7,6 +8,7 @@ export default function BattleMap({ run, onSelectNode, onAbandon }) {
   const { map, position, reached, team } = run
   const available = availableNodes(map, position).map(n => n.id)
   const reachedSet = new Set(reached)
+  const boss = getBoss(run.bossId)
 
   // Layout: SVG viewBox 0..1000 (x) by layer rows.
   const W = 1000
@@ -23,9 +25,11 @@ export default function BattleMap({ run, onSelectNode, onAbandon }) {
       <div style={{ padding: '12px 16px', background: 'var(--bg-panel)', borderBottom: '1px solid var(--border)',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
-          <div style={{ fontSize: 15, fontWeight: 900, color: 'var(--accent-rose)' }}>⚔️ The Dungeon</div>
+          <div style={{ fontSize: 15, fontWeight: 900, color: 'var(--accent-rose)' }}>
+            ⚔️ The Dungeon <span style={{ fontSize: 11, color: 'var(--accent-sun)' }}>· Tier {run.tier || 1}</span>
+          </div>
           <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-muted)' }}>
-            Choose your path to the 🐉 Boss
+            Choose your path to {boss.emoji} {boss.name}
           </div>
         </div>
         <button onClick={onAbandon} style={{ fontSize: 11, fontWeight: 800, padding: '6px 10px', borderRadius: 8,
@@ -68,7 +72,7 @@ export default function BattleMap({ run, onSelectNode, onAbandon }) {
                   stroke={meta.color} strokeWidth={isCurrent ? 4 : 2.5}
                   opacity={dim ? 0.35 : 1} />
                 <text x={px(n)} y={py(n) + 9} textAnchor="middle" fontSize={26} opacity={dim ? 0.4 : 1}>
-                  {isReached && !isCurrent ? '✓' : meta.emoji}
+                  {isReached && !isCurrent ? '✓' : n.type === 'boss' ? boss.emoji : meta.emoji}
                 </text>
               </g>
             )

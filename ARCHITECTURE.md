@@ -37,6 +37,7 @@ All game state lives in one `save` object (see `getDefaultSave()` in `src/gameLo
 ### PlayerProfile (the save root)
 ```js
 {
+  version: number,               // save-schema version (drives migrations on load)
   onboarded: boolean,
   profile: { name: string, peepName: string },
   coins: number,                 // Gold, spent in the gacha
@@ -137,10 +138,29 @@ state machine that routes between the four top-level screens via a bottom nav:
 start/advance/end run); each screen is a presentational component receiving `save` + callbacks.
 Combat is a **pure module** (`src/game/combat.js`) so the UI just renders state and dispatches actions.
 
+### Save resilience
+
+Saves are defended at three layers so bad data can't brick the app (the failure
+mode we hit once already):
+
+- **Versioned migrations** — [saveMigrations.js](peep-companion-src/src/saveMigrations.js) runs a
+  loaded save through an ordered list of steps up to `SAVE_VERSION`, so the rest of the app assumes
+  one current shape. Adding a field is one new step; legacy/corrupt peeps are healed here instead of
+  crashing a view. Covered by [test/saveMigrations.test.js](peep-companion-src/test/saveMigrations.test.js).
+- **Error boundary** — [ErrorBoundary.jsx](peep-companion-src/src/ErrorBoundary.jsx) catches any
+  render crash and shows a reload / copy-details / reset recovery screen instead of a blank window.
+- **Atomic writes + backup** — [electron/main.js](peep-companion-src/electron/main.js) writes to a
+  temp file, snapshots the prior save to `.bak`, then renames into place; `loadData` falls back to
+  the `.bak` if the main file is missing or corrupt.
+
+Run the suite with `npm test` (Vitest — covers migrations + the combat engine).
+
 ### File map
 ```
 src/
-  App.jsx              load/save, onboarding, mini-mode, save migration
+  App.jsx              load/save, onboarding, mini-mode
+  saveMigrations.js    versioned save migration pipeline
+  ErrorBoundary.jsx    render-crash recovery screen
   GameShell.jsx        ← the state machine (view router + nav)
   Nav.jsx              bottom navigation bar
   Dashboard.jsx        Phase A: habit tracker (+ active Peep growth)
@@ -159,12 +179,26 @@ src/
 
 ## 4. Build order / status
 
-- **Phase A — Habits & growth:** ✅ done (`Dashboard`, `gameLogic`, XP/coins/happiness/streak).
-- **Phase B — Gacha & team:** ✅ gacha + collection done; team-of-3 selection added (`TeamSelect`).
-- **Phase C — Roguelite:** ✅ map gen, pure combat engine, items, boss trophy, Battle/Map UI.
-  Now includes **mid-fight persistence/resume**, **status effects** (burn/poison/paralyze) with
-  status moves, **item consumption + revive targeting**, and battle juice (damage popups, screen
-  shake, hit flashes). Remaining polish: deeper balance tuning, more enemies/moves, and
-  per-attacker lunge animations.
+- **Phase A — Habits & growth:** ✅ habits, XP/coins/happiness. **Daily streak** now actually advances
+  (`applyStreak`), and habit XP flows to the **whole battle team**, not just the active companion
+  (`applyHabitReward`, `TEAM_XP_SHARE`). A native **daily reminder** notification (`electron/main.js`)
+  nudges you at 7 PM if tasks remain.
+- **Phase B — Gacha & team:** ✅ gacha + collection + team-of-3 selection (`TeamSelect`).
+- **Phase C — Roguelite:** ✅ map gen, pure combat engine, items, Battle/Map UI, mid-fight
+  persistence/resume, status effects (burn/poison/paralyze/frostbite) + status moves, item
+  consumption + revive targeting, and battle juice (damage popups, screen shake, hit flashes).
+  **Meta-progression:** ascension **tiers** (each run pushes one tier past your best; difficulty +
+  rewards scale; `bestTier` persists) and **boss variety** (one of several themed bosses per run,
+  each dropping a pre-leveled themed Peep).
 
-Run it: `cd peep-companion-src && npm install && npm run dev`.
+### Progression & balance
+
+The loop is closed: real habits level your battle team → the team clears dungeon tiers → tier clears
+bank ascension + drop Peeps + Gold → harder tiers demand more leveling. Difficulty is data-tuned via
+[scripts/balance.mjs](peep-companion-src/scripts/balance.mjs), which simulates full runs (HP carry,
+rests, items) and reports clear rates by tier and team strength. Current curve: ~L8 rare teams are the
+intended entry (T1 farmable), each tier wants a few more levels, and ultra teams get a long ascension
+tail. Losing runs still grant per-fight XP, so weaker teams grind upward rather than hitting a wall.
+
+Run it: `cd peep-companion-src && npm install && npm run dev` · tests: `npm test` ·
+balance: `node --experimental-default-type=module scripts/balance.mjs`
