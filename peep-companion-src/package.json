@@ -7,7 +7,9 @@
   "scripts": {
     "dev": "node scripts/generate-icon.js && concurrently \"vite\" \"wait-on http://localhost:5173 && electron .\"",
     "build": "node scripts/generate-icon.js && vite build && electron-builder",
+    "build:dir": "node scripts/generate-icon.js && vite build && electron-builder --dir",
     "release": "node scripts/generate-icon.js && vite build && electron-builder --publish always",
+    "smoke": "node scripts/smoke.cjs",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest"

@@ -32,6 +32,15 @@ jobs:
       - name: Run tests
         run: npm test
 
+      # Build the unpacked app and launch it to prove the renderer isn't blank
+      # BEFORE we publish — guards against the dev-server/file:// load bugs that
+      # only surface in the packaged app and shipped two broken releases.
+      - name: Build unpacked app
+        run: npm run build:dir
+
+      - name: Smoke test — fail if the packaged app renders blank
+        run: npm run smoke
+
       - name: Build & publish installer + portable
         run: npm run release
         env:
