@@ -1,6 +1,6 @@
 {
   "name": "peep-companion",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A habit tracker, monster-catcher, and roguelite battler in one.",
   "author": "Peep Companion",
   "main": "electron/main.js",
@@ -19,6 +19,7 @@
     "electron-builder": "^24.0.0",
     "puppeteer-core": "^25.1.0",
     "vite": "^5.0.0",
+    "vite-plugin-singlefile": "^2.3.3",
     "vitest": "^2.1.9",
     "wait-on": "^7.0.0"
   },
