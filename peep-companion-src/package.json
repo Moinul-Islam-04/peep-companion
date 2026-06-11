@@ -1,11 +1,13 @@
 {
   "name": "peep-companion",
   "version": "1.0.0",
-  "description": "Your productivity companion",
+  "description": "A habit tracker, monster-catcher, and roguelite battler in one.",
+  "author": "Peep Companion",
   "main": "electron/main.js",
   "scripts": {
     "dev": "node scripts/generate-icon.js && concurrently \"vite\" \"wait-on http://localhost:5173 && electron .\"",
     "build": "node scripts/generate-icon.js && vite build && electron-builder",
+    "release": "node scripts/generate-icon.js && vite build && electron-builder --publish always",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest"
@@ -21,21 +23,55 @@
     "wait-on": "^7.0.0"
   },
   "dependencies": {
+    "electron-updater": "^6.8.9",
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
   },
   "build": {
     "appId": "com.peep.companion",
     "productName": "Peep Companion",
+    "publish": {
+      "provider": "github",
+      "owner": "Moinul-Islam-04",
+      "repo": "peep-companion"
+    },
     "directories": {
-      "output": "dist-electron"
+      "output": "dist-electron",
+      "buildResources": "build"
     },
     "win": {
-      "target": "nsis"
+      "icon": "public/icon.png",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "Peep-Companion-Setup-${version}.${ext}"
+    },
+    "portable": {
+      "artifactName": "Peep-Companion-Portable-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Peep Companion"
     },
     "files": [
       "dist/**/*",
-      "electron/**/*"
+      "electron/**/*",
+      "public/**/*"
     ]
   }
 }

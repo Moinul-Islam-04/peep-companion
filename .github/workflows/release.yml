@@ -1,0 +1,39 @@
+name: Release
+
+# Build the Windows .exe and publish it to a GitHub Release whenever a version
+# tag (e.g. v1.0.1) is pushed. Also runnable on demand from the Actions tab.
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write   # needed to create/upload the GitHub Release
+
+jobs:
+  release:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: peep-companion-src
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: peep-companion-src/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build & publish installer + portable
+        run: npm run release
+        env:
+          # electron-builder uploads to GitHub Releases using this token
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

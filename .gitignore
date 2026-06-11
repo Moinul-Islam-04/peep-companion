@@ -5,6 +5,7 @@ node_modules/
 dist/
 build/
 out/
+dist-electron/
 
 # IDEs and editors
 .vscode/

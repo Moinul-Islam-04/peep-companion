@@ -108,14 +108,55 @@ npm install
 npm run dev      # launches Vite + Electron
 ```
 
-Build a distributable Windows installer:
-
-```bash
-npm run build    # vite build + electron-builder (NSIS)
-```
-
 The app also runs in a plain browser (`npm run dev` exposes Vite on `:5173`) using a `localStorage`
 save mock — handy for quick iteration without Electron.
+
+### 📦 Building the downloadable `.exe`
+
+```bash
+cd peep-companion-src
+npm install
+npm run build    # vite build + electron-builder
+```
+
+This produces two artifacts in `peep-companion-src/dist-electron/`:
+
+| File | What it is |
+|------|-----------|
+| **`Peep-Companion-Setup-1.0.0.exe`** | Installer — wizard, choose install dir, desktop + Start-menu shortcuts (per-user, no admin needed). |
+| **`Peep-Companion-Portable-1.0.0.exe`** | Standalone — download and run, no installation. |
+
+Share either file directly (it's self-contained — ~74 MB, bundling the Electron/Chromium runtime).
+
+> **Heads-up — SmartScreen:** the build is **unsigned**, so Windows SmartScreen will show
+> "Windows protected your PC" on first run — click **More info → Run anyway**. To remove that warning
+> for public distribution you'd buy a code-signing certificate (~$100–400/yr, an OV/EV cert from a CA
+> like DigiCert/Sectigo) and point electron-builder at it via `win.certificateFile` +
+> `CSC_KEY_PASSWORD`. Not needed for personal/internal sharing.
+
+### 🚀 Automated releases + auto-update
+
+Pushing a version tag builds the app on GitHub Actions and publishes it to a **GitHub Release** that
+anyone can download from — and installed copies **update themselves** from that same release.
+
+**To cut a release:**
+
+```bash
+cd peep-companion-src
+npm version patch          # bumps package.json + commits + creates the matching git tag
+git push --follow-tags     # pushes the commit and the v<version> tag
+```
+
+The [`.github/workflows/release.yml`](.github/workflows/release.yml) workflow then runs on a Windows
+runner: it installs deps, runs the test suite, builds the installer + portable, and uploads them
+(plus `latest.yml` for the updater) to a **draft** GitHub Release tagged `v<version>`. Review it on the
+repo's *Releases* page and click **Publish** — the artifacts are now downloadable.
+
+**Auto-update:** the installed (NSIS) app checks the repo's published releases on launch
+([`electron-updater`](https://www.electron.build/auto-update)). When a newer version exists it
+downloads in the background, notifies the user, and installs on next quit. (Portable users just
+re-download.) No extra setup — it uses the repo's built-in `GITHUB_TOKEN`; the only requirement is
+that the git tag matches the `version` in `package.json`, which `npm version` keeps in sync.
 
 ---
 

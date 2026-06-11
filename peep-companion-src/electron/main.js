@@ -1,4 +1,5 @@
 const { app, BrowserWindow, ipcMain, Tray, Menu, screen, Notification } = require('electron')
+const { autoUpdater } = require('electron-updater')
 const path = require('path')
 const fs = require('fs')
 
@@ -229,11 +230,29 @@ function scheduleDailyReminder() {
   }, next - now)
 }
 
+// ── Auto-update ───────────────────────────────────────────────────────────────
+// Checks GitHub Releases on launch; if a newer version is published, it downloads
+// in the background and notifies the user, installing on next quit. Only meaningful
+// for the installed (NSIS) build, so it's a no-op in dev and degrades quietly.
+function setupAutoUpdates() {
+  if (!app.isPackaged) return
+  autoUpdater.autoDownload = true
+  autoUpdater.on('error', err => console.error('Auto-update error:', err?.message || err))
+  autoUpdater.on('update-downloaded', () => {
+    if (!Notification.isSupported()) return
+    const n = new Notification({ title: '🐣 Update ready', body: 'A new version downloaded — restart Peep Companion to apply.' })
+    n.on('click', () => autoUpdater.quitAndInstall())
+    n.show()
+  })
+  try { autoUpdater.checkForUpdates() } catch (e) { console.error('Update check failed:', e) }
+}
+
 app.whenReady().then(() => {
   app.setAppUserModelId('com.peep.companion')   // required for Windows notifications
   createWindow()
   createTray()
   scheduleDailyReminder()
+  setupAutoUpdates()
 })
 
 app.on('window-all-closed', () => { 
