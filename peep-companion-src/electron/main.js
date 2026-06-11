@@ -3,7 +3,9 @@ const { autoUpdater } = require('electron-updater')
 const path = require('path')
 const fs = require('fs')
 
-const isDev = process.env.NODE_ENV !== 'production'
+// Use Electron's own packaged flag — NOT NODE_ENV, which is unset in a packaged
+// build and would make it try to load the (non-running) Vite dev server → blank.
+const isDev = !app.isPackaged
 
 const DATA_PATH = path.join(app.getPath('userData'), 'peep-save.json')
 

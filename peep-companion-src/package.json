@@ -1,6 +1,6 @@
 {
   "name": "peep-companion",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A habit tracker, monster-catcher, and roguelite battler in one.",
   "author": "Peep Companion",
   "main": "electron/main.js",
